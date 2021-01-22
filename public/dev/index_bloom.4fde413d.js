@@ -50420,8 +50420,7 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
           obj = this.rayTest(this.mouseState, obj.children[0].children);
           if (obj) return obj;
         }
-      } // console.log(obj);
-
+      }
     }
   }, {
     key: "showPoints_HideAll",

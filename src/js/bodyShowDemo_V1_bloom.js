@@ -191,7 +191,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
     }
   }
 
-
   createSecondElement() {
     let i = 0;
     this.muscleArr.indexArr.forEach((index) => {
@@ -294,16 +293,12 @@ class MainCanvasRenderer extends CanvansRenderBase {
     this.mouseDown = false
     if (this.dragChange) {
       this.showPointsTest();
-
     }
-
   }
 
   onMouseWheel(e) {
     // console.log('my whell handle')
-
     this.showPointsTest();
-
   }
 
   onMouseClick(e) {
@@ -355,8 +350,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
   }
 
   showPointVisibleTest(obj) {
-
-
     let v = obj.getWorldPosition(new THREE.Vector3(0, 0, 0));
     v.sub(this.camera.position);
     let length = v.length();
@@ -379,9 +372,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
     else {
       return true;
     }
-
-
-
   }
 
   moveCamera2Target(obj) {
@@ -392,7 +382,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
     this.camera.updateMatrixWorld();
     this.showPointsTest();
     // console.log(this.camera);
-
     let dir = this.camera.position.clone();
     dir.sub(targetV);
     // console.log(dir.length())
@@ -403,17 +392,12 @@ class MainCanvasRenderer extends CanvansRenderBase {
     //     this.camera.position.copy(targetV.add(dir));
 
     // }
-
-
   }
 
-
   getMouseTarget() {
-
     let obj = this.rayTest(this.mouseState, this.skinArr);
     if (obj) {
       // this.highLightToogle.toogle(obj.name);
-
       return obj;
     }
     else {
@@ -424,11 +408,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
         if (obj)
           return obj;
       }
-
     }
-    // console.log(obj);
-
-
   }
 
   showPoints_HideAll() {
@@ -447,9 +427,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
       }
       this.showPointsTest();
     }
-
-
-
   }
 
   restartClick() {
@@ -537,8 +514,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
     obj.bloomObj = bloomObj;
 
   }
-
-
   render() {
     this.camera.layers.set(BLOOM_SCENE);
     this.bloomComposer.render();
@@ -546,7 +521,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
     this.finalComposer.render();
     // this.renderer.render(this.scene,this.camera);
   }
-
 }
 
 class highLightToogle {
@@ -561,7 +535,6 @@ class highLightToogle {
     let highLightMat;
     // console.log(arr);
     for (let i = 0; i < arr.length; i++) {
-
       if (arr[i].material.length) {
         // console.log(arr[i])
         if (!highLightMatArr[arr[i].material[0].name]) {
@@ -572,19 +545,10 @@ class highLightToogle {
           mat = arr[i].material[1].clone();
           mat.color = new THREE.Color(0xff5555);
           highLightMat.push(mat);
-
-
           highLightMatArr[arr[i].material[0].name] = highLightMat;
-
         }
-
         highLightMat = highLightMatArr[arr[i].material[0].name];
-
-      }
-
-      else {
-
-
+      } else {
         if (!highLightMatArr[arr[i].material.name]) {
           highLightMat = arr[i].material.clone();
           highLightMat.color = new THREE.Color(0xff5555);
@@ -629,8 +593,6 @@ class highLightToogle {
       this.txtarea.hidden = false
 
     }
-
-
   }
 
   unLightAll() {
@@ -664,23 +626,16 @@ class highLightToogleElement {
     else {
       this.obj.material = this.highLightMat;
     }
-
-
   }
 
   unLight() {
-
-
     if (this.obj.highLightAble == false) {
-
       return;
     }
     else {
       this.obj.material = this.oldMat
     }
-
   }
-
 }
 
 class showPoint_base {
@@ -712,11 +667,7 @@ class showPoint_base {
     this.groupIndex = (parseInt(nameSplitArr[0]) - 1);
     this.partIndex = (parseInt(nameSplitArr[1]) - 1);
     // this.chinesName = nameArr[this.groupIndex][this.partIndex];
-
-
-
   }
-
 
   updataImagePos() {
     this.cal_pos(this.obj, this.camera, this.canvas);
