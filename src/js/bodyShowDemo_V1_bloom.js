@@ -165,7 +165,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
   }
 
   initMuscle(obj) {
-    console.log(this.muscleArr);
+    // console.log(this.muscleArr);
     if (!this.muscleArr[obj.index]) {
       this.muscleArr[obj.index] = new Muscular(obj);
       this.muscleArr.indexArr.push(obj.index);
