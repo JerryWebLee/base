@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>人体展示</title>
+    <link rel="stylesheet" href="/dev/mycss.886ed9ec.css" type="text/css">
+    <style>#tipbox {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        z-index: 1000;
+      }</style>
+</head>
+
+<body class="myCavnas">
+
+    <div id="canvasGroup" class="myCavnas">
+
+        <image src="../resource/restart.png" class="button" id="restartButton">
+        <image src="../resource/undo.png" class="button" id="undoButton">
+        <image src="../resource/disable.png" class="button" id="disableButton">
+        <image src="../resource/cancel.png" class="button" id="cancelButton"></image>
+
+        <div id="txtarea" class="txtarea">
+          <p id="name" style="font-size: 50px;text-align:center;width: 100%;height: 20%;float:none;">名字</p>
+        </div>
+
+        <div id="hurttxtarea" class="txtarea" hidden="">
+          <p id="reason">成因</p>
+          <p id="solution">手法</p>
+        </div>
+
+        <div id="tipbox">
+          <div id="tip"></div>
+        </div>
+        <canvas id="muscleCanvas" class="myCavnas" style="z-index: 0;"></canvas>
+        <canvas id="mainCanvas" class="myCavnas" style="z-index: 1;">
+          
+        </canvas>
+       
+
+    </image></image></image></div>
+
+    <div class="loading-wrapper" id="loading">
+        <div class="loading wave">
+          HumanBody
+        </div>
+      </div>
+    <script src="/dev/index_editor.b1099f37.js"></script>
+</body>
+
+</html>

@@ -1,4 +1,5 @@
 node_modules
 \.cache
 \.idea
-/public/dev
+\.vscode
+/public/dev/images/face
