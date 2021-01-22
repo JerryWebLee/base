@@ -74,8 +74,10 @@ class MainCanvasRenderer extends CanvansRenderBase {
     let hightLightArr = [];
     let allObjArr_byName = [];
     let allObjArr = [];
+    let i = 0
+    this.muscleArr = []
+    this.muscleArr.indexArr = []
 
-    // console.log('pppppp', this.body);
     // 遍历组中的对象属性
     this.body.traverse((obj) => {
       if (obj.name == 'ache_area') {
@@ -86,17 +88,29 @@ class MainCanvasRenderer extends CanvansRenderBase {
         skinArr.push(obj);
         hightLightArr.push(obj);
         obj.material.side = THREE.DoubleSide;
+        return;
       }
       else if (type == 'Skeletal') {
         boneArr.push(obj);
-
+        return;
       }
       else if (type == 'Box') {
         boxArr.push(obj);
         obj.layers.disable(0);
+        return;
+      }
+      else if (obj.name.substr(0, 5) == 'Point') {
+        let index = parseInt(obj.name.substr(5, 3));
+        showPointArr[index] = obj;
+        return;
+      }
+      else if (obj.name.substr(0, 5) == 'point' && obj.name.substr(8, 6) == 'inside') {
+        this.createHurtPoint(obj);
+        let index = parseInt(obj.name.substr(5, 3));
+        hurtPointArr[index] = obj;
+        return;
       }
       else if (obj.material && obj.material.name == 'Muscular_System') {
-        // console.log(obj.name);
         let cName = obj.name.split('_');
         if (cName.length == 1) {
           console.log('this obj only have cName')
@@ -107,8 +121,9 @@ class MainCanvasRenderer extends CanvansRenderBase {
 
         obj.cName = cName;
         obj.index = obj.name.slice(0, obj.name.length - obj.cName.length - 1)
+        // console.log(i++, obj);
 
-        // this.initMuscle(obj)
+        this.initMuscle(obj)
         obj.material = new THREE.MeshBasicMaterial({
           map: obj.material.map,
           transparent: true,
@@ -120,20 +135,10 @@ class MainCanvasRenderer extends CanvansRenderBase {
 
         if (obj.index.match('B'))
           obj.visible = false;
-      }
-
-      if (obj.name.substr(0, 5) == 'Point') {
-        let index = parseInt(obj.name.substr(5, 3));
-        showPointArr[index] = obj;
-      }
-
-      if (obj.name.substr(0, 5) == 'point' && obj.name.substr(8, 6) == 'inside') {
-        this.createHurtPoint(obj);
-        let index = parseInt(obj.name.substr(5, 3));
-        hurtPointArr[index] = obj;
+        return;
       }
     })
-    // this.initUI()
+    this.initUI()
     this.showPointArr = [];
     for (let i = 1; i < showPointArr.length; i++) {
       if (showPointArr[i]) {
@@ -160,6 +165,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
   }
 
   initMuscle(obj) {
+    console.log(this.muscleArr);
     if (!this.muscleArr[obj.index]) {
       this.muscleArr[obj.index] = new Muscular(obj);
       this.muscleArr.indexArr.push(obj.index);
@@ -203,16 +209,11 @@ class MainCanvasRenderer extends CanvansRenderBase {
 
       }
       i++;
-
       this.uiData[muscle.class].children.push(data);
     })
-
-
   }
 
-
   renderTreeUI(data) {
-
     const that = this;
     layui.use('tree', function () {
       const tree = layui.tree;
@@ -223,9 +224,8 @@ class MainCanvasRenderer extends CanvansRenderBase {
         showCheckbox: true,
         id: "mainTree",
         // accordion:true,
-        click: this.handleElementClick.bind(this),
-        oncheck: this.handleElementCheck.bind(this)
-
+        // click: this.handleElementClick.bind(this),
+        // oncheck: this.handleElementCheck.bind(this)
       });
       this.uiTree = tree;
     }.bind(this))
@@ -247,7 +247,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
   }
 
   createMouseEvent() {
-
     let canvasClick = new MyClick(this.canvas);
     const envetTarget = canvasClick;
     this.clickTimer = '';
@@ -257,7 +256,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
     envetTarget.addEventListener('mousemove', this.onMouseMove.bind(this));
     envetTarget.addEventListener('mouseup', this.onMouseUP.bind(this));
     envetTarget.addEventListener('wheel', this.onMouseWheel.bind(this));
-
   }
 
   onMouseMove(e) {
@@ -769,6 +767,7 @@ class showPoint extends showPoint_base {
     for (let i = 1; i < muscleIndexArr.length; i++) {
       if (muscleIndexArr[i].match('A') || muscleIndexArr[i].match('B')) {
         // console.log(muscleArr[muscleIndexArr[i]])
+        // console.log(muscleIndexArr[i]);
       }
       if (muscleArr[muscleIndexArr[i]]) {
         this.muscleArr.push(muscleArr[muscleIndexArr[i]])

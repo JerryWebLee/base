@@ -50084,8 +50084,10 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
       var hurtPointArr = [];
       var hightLightArr = [];
       var allObjArr_byName = [];
-      var allObjArr = []; // console.log('pppppp', this.body);
-      // 遍历组中的对象属性
+      var allObjArr = [];
+      var i = 0;
+      this.muscleArr = [];
+      this.muscleArr.indexArr = []; // 遍历组中的对象属性
 
       this.body.traverse(function (obj) {
         if (obj.name == 'ache_area') {
@@ -50098,13 +50100,26 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
           skinArr.push(obj);
           hightLightArr.push(obj);
           obj.material.side = THREE.DoubleSide;
+          return;
         } else if (type == 'Skeletal') {
           boneArr.push(obj);
+          return;
         } else if (type == 'Box') {
           boxArr.push(obj);
           obj.layers.disable(0);
+          return;
+        } else if (obj.name.substr(0, 5) == 'Point') {
+          var index = parseInt(obj.name.substr(5, 3));
+          showPointArr[index] = obj;
+          return;
+        } else if (obj.name.substr(0, 5) == 'point' && obj.name.substr(8, 6) == 'inside') {
+          _this.createHurtPoint(obj);
+
+          var _index = parseInt(obj.name.substr(5, 3));
+
+          hurtPointArr[_index] = obj;
+          return;
         } else if (obj.material && obj.material.name == 'Muscular_System') {
-          // console.log(obj.name);
           var cName = obj.name.split('_');
 
           if (cName.length == 1) {
@@ -50115,7 +50130,9 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
           }
 
           obj.cName = cName;
-          obj.index = obj.name.slice(0, obj.name.length - obj.cName.length - 1); // this.initMuscle(obj)
+          obj.index = obj.name.slice(0, obj.name.length - obj.cName.length - 1); // console.log(i++, obj);
+
+          _this.initMuscle(obj);
 
           obj.material = new THREE.MeshBasicMaterial({
             map: obj.material.map,
@@ -50125,27 +50142,15 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
           hightLightArr.push(obj);
           muscleArr[obj.index] = obj;
           if (obj.index.match('B')) obj.visible = false;
+          return;
         }
-
-        if (obj.name.substr(0, 5) == 'Point') {
-          var index = parseInt(obj.name.substr(5, 3));
-          showPointArr[index] = obj;
-        }
-
-        if (obj.name.substr(0, 5) == 'point' && obj.name.substr(8, 6) == 'inside') {
-          _this.createHurtPoint(obj);
-
-          var _index = parseInt(obj.name.substr(5, 3));
-
-          hurtPointArr[_index] = obj;
-        }
-      }); // this.initUI()
-
+      });
+      this.initUI();
       this.showPointArr = [];
 
-      for (var i = 1; i < showPointArr.length; i++) {
-        if (showPointArr[i]) {
-          var point = new showPoint(showPointArr[i], hurtPointArr[i], this, this.canvas, this.camera);
+      for (var _i = 1; _i < showPointArr.length; _i++) {
+        if (showPointArr[_i]) {
+          var point = new showPoint(showPointArr[_i], hurtPointArr[_i], this, this.canvas, this.camera);
           this.showPointArr.push(point);
           point.initMuscleArr(muscleArr);
         }
@@ -50166,6 +50171,8 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
   }, {
     key: "initMuscle",
     value: function initMuscle(obj) {
+      console.log(this.muscleArr);
+
       if (!this.muscleArr[obj.index]) {
         this.muscleArr[obj.index] = new Muscular(obj);
         this.muscleArr.indexArr.push(obj.index);
@@ -50231,10 +50238,10 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
           ,
           data: data,
           showCheckbox: true,
-          id: "mainTree",
-          // accordion:true,
-          click: this.handleElementClick.bind(this),
-          oncheck: this.handleElementCheck.bind(this)
+          id: "mainTree" // accordion:true,
+          // click: this.handleElementClick.bind(this),
+          // oncheck: this.handleElementCheck.bind(this)
+
         });
         this.uiTree = tree;
       }.bind(this));
@@ -50801,6 +50808,7 @@ var showPoint = /*#__PURE__*/function (_showPoint_base) {
 
       for (var i = 1; i < muscleIndexArr.length; i++) {
         if (muscleIndexArr[i].match('A') || muscleIndexArr[i].match('B')) {// console.log(muscleArr[muscleIndexArr[i]])
+          // console.log(muscleIndexArr[i]);
         }
 
         if (muscleArr[muscleIndexArr[i]]) {

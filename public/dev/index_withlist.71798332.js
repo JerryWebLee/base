@@ -51008,6 +51008,7 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
       var hightLightArr = [];
       var index = 0;
       this.body.traverse(function (obj) {
+        console.log(obj);
         var type = obj.name.split('_')[0];
 
         if (type == 'Box') {

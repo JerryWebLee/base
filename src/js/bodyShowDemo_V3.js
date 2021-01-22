@@ -83,7 +83,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
     const hightLightArr = [];
     let index = 0
     this.body.traverse((obj) => {
-
+      console.log(obj);
       let type = obj.name.split('_')[0];
 
       if (type == 'Box') {
