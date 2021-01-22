@@ -50024,7 +50024,7 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
             switch (_context.prev = _context.next) {
               case 0:
                 _context.next = 2;
-                return this.loadFBX('../resource/models/ALL2.FBX');
+                return this.loadFBX('../resource/models/ALL4.FBX');
 
               case 2:
                 body = _context.sent;
@@ -50515,11 +50515,11 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
     value: function createHurtPoint(obj) {
       var oMat = obj.material;
       obj.material = new THREE.MeshBasicMaterial();
-      obj.material.map = oMat.map;
-      obj.scale.set(obj.scale.x * 0.5, obj.scale.x * 0.5, obj.scale.x * 0.6);
-      var bloomObj = obj.clone(); // console.log(obj);
+      obj.material.map = oMat.map; // obj.scale.set(obj.scale.x * 0.5, obj.scale.x * 0.5, obj.scale.x * 0.6)
 
-      bloomObj.scale.set(obj.scale.x * 0.9, obj.scale.x * 0.9, obj.scale.x * 0.9); // bloomObj.scale.set(obj.scale.x * 1.9, obj.scale.x * 1.9, obj.scale.x * 1.9);
+      var bloomObj = obj.clone(); // console.log(obj);
+      // bloomObj.scale.set(obj.scale.x * 0.9, obj.scale.x * 0.9, obj.scale.x * 0.9);
+      // bloomObj.scale.set(obj.scale.x * 1.9, obj.scale.x * 1.9, obj.scale.x * 1.9);
 
       this.scene.attach(bloomObj);
       bloomObj.material = new THREE.MeshBasicMaterial();

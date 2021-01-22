@@ -31,7 +31,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
   // 模型加载渲染引擎
   async run() {
 
-    let body = await this.loadFBX('../resource/models/ALL2.FBX');
+    let body = await this.loadFBX('../resource/models/ALL4.FBX');
     this.scene.add(body);
     this.camera.far = 1000;
 
@@ -492,10 +492,10 @@ class MainCanvasRenderer extends CanvansRenderBase {
     let oMat = obj.material;
     obj.material = new THREE.MeshBasicMaterial();
     obj.material.map = oMat.map;
-    obj.scale.set(obj.scale.x * 0.5, obj.scale.x * 0.5, obj.scale.x * 0.6)
+    // obj.scale.set(obj.scale.x * 0.5, obj.scale.x * 0.5, obj.scale.x * 0.6)
     let bloomObj = obj.clone();
     // console.log(obj);
-    bloomObj.scale.set(obj.scale.x * 0.9, obj.scale.x * 0.9, obj.scale.x * 0.9);
+    // bloomObj.scale.set(obj.scale.x * 0.9, obj.scale.x * 0.9, obj.scale.x * 0.9);
     // bloomObj.scale.set(obj.scale.x * 1.9, obj.scale.x * 1.9, obj.scale.x * 1.9);
 
     this.scene.attach(bloomObj);
