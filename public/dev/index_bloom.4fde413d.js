@@ -50000,7 +50000,8 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 var ENTIRE_SCENE = 0,
     BLOOM_SCENE = 2;
 var bloomLayer = new THREE.Layers();
-bloomLayer.set(BLOOM_SCENE); // canvas渲染
+bloomLayer.set(BLOOM_SCENE);
+var muscleClassNameArr = ['头颈部', '肩颈部', '手臂部', '胸腹部', '腰背部', '腿脚部', '其他']; // canvas渲染
 
 var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
   (0, _inherits2.default)(MainCanvasRenderer, _CanvansRenderBase);
@@ -50107,14 +50108,14 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
           var cName = obj.name.split('_');
 
           if (cName.length == 1) {
-            // console.log('this obj only have cName')
+            console.log('this obj only have cName');
             cName = cName[0];
           } else {
             cName = cName[cName.length - 1];
           }
 
           obj.cName = cName;
-          obj.index = obj.name.slice(0, obj.name.length - obj.cName.length - 1); // console.log(obj.index);
+          obj.index = obj.name.slice(0, obj.name.length - obj.cName.length - 1); // this.initMuscle(obj)
 
           obj.material = new THREE.MeshBasicMaterial({
             map: obj.material.map,
@@ -50122,38 +50123,27 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
             opacity: 0.5
           });
           hightLightArr.push(obj);
-          var name = obj.name;
-
-          var _pos = name.lastIndexOf('_'); // console.log(_pos);
-
-
-          muscleArr[obj.index] = obj; // console.log('wwww', muscleArr);
-          // obj.material.transparent = false;
-          // obj.material.opacity = 0.5;
-          // obj.material.color.setRGB(1, 1, 0);
-          // obj.material.vertexColors=0;
-
+          muscleArr[obj.index] = obj;
           if (obj.index.match('B')) obj.visible = false;
         }
 
         if (obj.name.substr(0, 5) == 'Point') {
           var index = parseInt(obj.name.substr(5, 3));
-          showPointArr[index] = obj; // console.log(obj.name, index);
+          showPointArr[index] = obj;
         }
 
         if (obj.name.substr(0, 5) == 'point' && obj.name.substr(8, 6) == 'inside') {
           _this.createHurtPoint(obj);
 
-          var _index = parseInt(obj.name.substr(5, 3)); // console.log(obj.name, index);
-
+          var _index = parseInt(obj.name.substr(5, 3));
 
           hurtPointArr[_index] = obj;
         }
-      });
-      this.showPointArr = []; // console.log(showPointArr, hurtPointArr)
+      }); // this.initUI()
+
+      this.showPointArr = [];
 
       for (var i = 1; i < showPointArr.length; i++) {
-        // console.log(showPointArr[i],hurtPointArr[i])
         if (showPointArr[i]) {
           var point = new showPoint(showPointArr[i], hurtPointArr[i], this, this.canvas, this.camera);
           this.showPointArr.push(point);
@@ -50172,6 +50162,101 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
       this.showPoints_HideAll();
       cancelButton.addEventListener('click', this.cancelClick.bind(this));
       restartButton.addEventListener('click', this.restartClick.bind(this));
+    }
+  }, {
+    key: "initMuscle",
+    value: function initMuscle(obj) {
+      if (!this.muscleArr[obj.index]) {
+        this.muscleArr[obj.index] = new Muscular(obj);
+        this.muscleArr.indexArr.push(obj.index);
+      } else {
+        this.muscleArr[obj.index].addMesh(obj);
+      }
+
+      this.muscleArr.push(new Muscular(obj));
+    }
+  }, {
+    key: "initUI",
+    value: function initUI() {
+      this.createFirstElement();
+      this.createSecondElement();
+      this.renderTreeUI(this.uiData);
+      this.flag = 0;
+    }
+  }, {
+    key: "createFirstElement",
+    value: function createFirstElement() {
+      this.uiData = [];
+
+      for (var i = 0; i < muscleClassNameArr.length; i++) {
+        var data = {
+          title: muscleClassNameArr[i],
+          type: 'firstClass',
+          spread: false,
+          id: muscleClassNameArr[i],
+          // disabled:true,
+          children: []
+        };
+        this.uiData.push(data);
+      }
+    }
+  }, {
+    key: "createSecondElement",
+    value: function createSecondElement() {
+      var _this2 = this;
+
+      var i = 0;
+      this.muscleArr.indexArr.forEach(function (index) {
+        var muscle = _this2.muscleArr[index];
+        var data = {
+          title: muscle.obj.cName,
+          type: 'secondeClass',
+          id: i,
+          class: muscle.class
+        };
+        i++;
+
+        _this2.uiData[muscle.class].children.push(data);
+      });
+    }
+  }, {
+    key: "renderTreeUI",
+    value: function renderTreeUI(data) {
+      var that = this;
+      layui.use('tree', function () {
+        var tree = layui.tree; //渲染
+
+        var inst1 = tree.render({
+          elem: '#test1' //绑定元素
+          ,
+          data: data,
+          showCheckbox: true,
+          id: "mainTree",
+          // accordion:true,
+          click: this.handleElementClick.bind(this),
+          oncheck: this.handleElementCheck.bind(this)
+        });
+        this.uiTree = tree;
+      }.bind(this));
+    }
+  }, {
+    key: "reloadTreeUI",
+    value: function reloadTreeUI(index, classIndex) {
+      if (!this.uiTree) {
+        return;
+      }
+
+      this.createFirstElement();
+      this.createSecondElement();
+
+      for (var i = 0; i < this.uiData.length; i++) {
+        this.uiData[i].spread = false;
+      }
+
+      this.uiData[classIndex].spread = true;
+      this.renderTreeUI(this.uiData);
+      this.uiTree.setChecked('mainTree', index);
+      console.log('reload');
     }
   }, {
     key: "createMouseEvent",
@@ -50261,10 +50346,10 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
   }, {
     key: "showPointsTest",
     value: function showPointsTest() {
-      var _this2 = this;
+      var _this3 = this;
 
       this.showPointArr.forEach(function (point) {
-        if (_this2.showPointVisibleTest(point.obj)) {
+        if (_this3.showPointVisibleTest(point.obj)) {
           // console.log(1111)
           point.show();
         } else {
@@ -50416,41 +50501,7 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
       finalPass.needsSwap = true;
       var finalComposer = new _EffectComposer.EffectComposer(this.renderer);
       finalComposer.addPass(renderScene);
-      finalComposer.addPass(finalPass); //create gui
-      // const gui = new dat.GUI();
-      // let that = this;
-      // gui.add(params, 'scene', ['Scene with Glow', 'Glow only', 'Scene only']).onChange(function (value) {
-      //     switch (value) {
-      //         case 'Scene with Glow':
-      //             bloomComposer.renderToScreen = false;
-      //             break;
-      //         case 'Glow only':
-      //             bloomComposer.renderToScreen = true;
-      //             break;
-      //         case 'Scene only':
-      //             // nothing to do
-      //             break;
-      //     }
-      //     that.render();
-      // });
-      // const folder = gui.addFolder('Bloom Parameters');
-      // folder.add(params, 'exposure', 0.1, 2).onChange(function (value) {
-      //     that.renderer.toneMappingExposure = Math.pow(value, 4.0);
-      //     that.render();
-      // });
-      // folder.add(params, 'bloomThreshold', 0.0, 1.0).onChange(function (value) {
-      //     bloomPass.threshold = Number(value);
-      //     that.render();
-      // });
-      // folder.add(params, 'bloomStrength', 0.0, 10.0).onChange(function (value) {
-      //     bloomPass.strength = Number(value);
-      //     that.render();
-      // });
-      // folder.add(params, 'bloomRadius', 0.0, 1.0).step(0.01).onChange(function (value) {
-      //     bloomPass.radius = Number(value);
-      //     that.render();
-      // });
-
+      finalComposer.addPass(finalPass);
       this.bloomComposer = bloomComposer;
       this.finalComposer = finalComposer;
     }
@@ -50725,50 +50776,38 @@ var showPoint = /*#__PURE__*/function (_showPoint_base) {
   var _super2 = _createSuper(showPoint);
 
   function showPoint(obj, hurtObj, manager, canvas, camera) {
-    var _this3;
+    var _this4;
 
     var iconUrl = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : '../resource/point5.png';
     var baseSize = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : [15, 15];
     var bigSize = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : [20, 20];
     (0, _classCallCheck2.default)(this, showPoint);
-    _this3 = _super2.call(this, obj, canvas, camera, iconUrl, baseSize = [15, 15], bigSize = [20, 20]); // console.log(obj, hurtObj)
+    _this4 = _super2.call(this, obj, canvas, camera, iconUrl, baseSize = [15, 15], bigSize = [20, 20]); // console.log(obj, hurtObj)
 
-    _this3.hurtObj = hurtObj; // this.hurtObj.visible=false;
+    _this4.hurtObj = hurtObj; // this.hurtObj.visible=false;
     // this.hurtObj.bloomObj.visible=false;
 
-    _this3.manager = manager;
+    _this4.manager = manager;
 
-    _this3.creatEvent();
+    _this4.creatEvent();
 
-    return _this3;
+    return _this4;
   }
 
   (0, _createClass2.default)(showPoint, [{
     key: "initMuscleArr",
     value: function initMuscleArr(muscleArr) {
-      console.log(muscleArr);
       var muscleIndexArr = this.hurtObj.name.slice(15).split('*');
-      this.muscleArr = []; // console.log(this.hurtObj.name)
-
-      console.log('muscleIndexArr:');
-      console.log(muscleIndexArr);
+      this.muscleArr = [];
 
       for (var i = 1; i < muscleIndexArr.length; i++) {
-        if (muscleIndexArr[i].match('A') || muscleIndexArr[i].match('B')) {
-          console.log('muscleArr[muscleIndexArr[i]]:');
-          console.log(muscleArr[muscleIndexArr[i]]);
+        if (muscleIndexArr[i].match('A') || muscleIndexArr[i].match('B')) {// console.log(muscleArr[muscleIndexArr[i]])
         }
-
-        console.log(muscleIndexArr[i]);
 
         if (muscleArr[muscleIndexArr[i]]) {
           this.muscleArr.push(muscleArr[muscleIndexArr[i]]);
         }
       }
-
-      console.log('muscleArr:');
-      console.log(this.muscleArr);
-      console.log('------------------------------------------'); // 
 
       this.oldMat = this.muscleArr[0].material;
       this.newMat = this.muscleArr[0].material.clone();
@@ -50791,9 +50830,8 @@ var showPoint = /*#__PURE__*/function (_showPoint_base) {
           USE_COLOR: true
         }
       });
-      this.newMat.transparent = true; // this.oldMat.transparent=true;
-
-      this.newMat.opacity = 0.5; // console.log(this.muscleArr);
+      this.newMat.transparent = true;
+      this.newMat.opacity = 0.5;
     }
   }, {
     key: "creatEvent",
@@ -50817,7 +50855,7 @@ var showPoint = /*#__PURE__*/function (_showPoint_base) {
   }, {
     key: "onClick",
     value: function onClick(e) {
-      var _this4 = this;
+      var _this5 = this;
 
       // console.log(this.hurtObj.name);
       this.hurtObj.bloomObj.layers.toggle(BLOOM_SCENE);
@@ -50829,7 +50867,7 @@ var showPoint = /*#__PURE__*/function (_showPoint_base) {
         this.manager.moveCamera2Target(this.hurtObj);
         this.muscleArr.forEach(function (obj) {
           // console.log(obj.index)
-          obj.material = _this4.newMat;
+          obj.material = _this5.newMat;
           obj.renderOrder = 1;
           obj.highLightAble = false;
           obj.visible = true;
@@ -50840,7 +50878,7 @@ var showPoint = /*#__PURE__*/function (_showPoint_base) {
         this.hurtObj.visible = false;
         this.hurtObj.bloomObj.visible = false;
         this.muscleArr.forEach(function (obj) {
-          obj.material = _this4.oldMat;
+          obj.material = _this5.oldMat;
           obj.renderOrder = 0;
           obj.highLightAble = true;
           obj.renderOrder = 10;
@@ -50853,6 +50891,55 @@ var showPoint = /*#__PURE__*/function (_showPoint_base) {
   }]);
   return showPoint;
 }(showPoint_base);
+
+var UI = function UI() {
+  (0, _classCallCheck2.default)(this, UI);
+};
+
+var Manager = function Manager() {
+  (0, _classCallCheck2.default)(this, Manager);
+};
+
+var Box = function Box() {
+  (0, _classCallCheck2.default)(this, Box);
+};
+
+var Skin = function Skin() {
+  (0, _classCallCheck2.default)(this, Skin);
+};
+
+var Bone = function Bone() {
+  (0, _classCallCheck2.default)(this, Bone);
+};
+
+var Muscular = /*#__PURE__*/function () {
+  function Muscular(obj) {
+    (0, _classCallCheck2.default)(this, Muscular);
+    this.obj = obj;
+    this.id = obj.index;
+    this.class = parseInt(this.id.split("_")[0]) - 1;
+    this.className = muscleClassNameArr[this.className];
+    this.index = parseInt(this.id.split("_")[1]);
+
+    if (this.id.match('02')) {// console.log('this is righ part');
+    }
+  }
+
+  (0, _createClass2.default)(Muscular, [{
+    key: "addMesh",
+    value: function addMesh(obj) {
+      this.obj_b = obj;
+    }
+  }, {
+    key: "showHurt",
+    value: function showHurt() {}
+  }]);
+  return Muscular;
+}();
+
+var clickObjBase = function clickObjBase() {
+  (0, _classCallCheck2.default)(this, clickObjBase);
+};
 
 exports.MainCanvasRenderer = MainCanvasRenderer;
 exports.showPoint = showPoint;

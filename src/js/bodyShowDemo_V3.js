@@ -297,14 +297,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
     if (obj.data.type === 'secondeClass') {
       this.reloadTreeUI(obj.data.id, obj.data.class);
     }
-
-
-
-
-    // obj.elem.
-    // console.log(this.uiTree);
-    // this.uiTree.setChecked('mainTree',null);
-
   }
 
   handleElementCheck(obj) {
@@ -314,16 +306,11 @@ class MainCanvasRenderer extends CanvansRenderBase {
       if (obj.data.type === 'secondeClass') {
         this.reloadTreeUI(obj.data.id, obj.data.class);
       }
-
-
-
     }
     else {
       this.flag = 0;
       return
     }
-
-
   }
 
   createBloom() {
