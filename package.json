@@ -1,0 +1,37 @@
+{
+  "name": "base",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node index",
+    "build": "parcel build src/pages/*.html --public-url ./ --out-dir ./public/build --no-source-maps --no-cache"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://admin@www.zugou.vip:29418/lv-demos.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.6.4",
+    "@babel/plugin-proposal-async-generator-functions": "^7.2.0",
+    "@babel/plugin-transform-runtime": "^7.6.2",
+    "@babel/preset-env": "^7.6.3",
+    "eslint": "^6.6.0",
+    "mime": "^2.4.4",
+    "parcel-bundler": "^1.12.4",
+    "vconsole": "^3.3.4"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "dat.gui": "^0.7.7",
+    "js": "^0.1.0",
+    "layui-src": "^2.5.7",
+    "t": "^0.5.1",
+    "three": "^0.109.0",
+    "touchjs": "^0.2.14",
+    "tre": "^1.0.5",
+    "vue-axios": "^2.1.5"
+  }
+}

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>人体展示</title>
+    <link rel="stylesheet" href="../css/mycss.css" type="text/css" />
+    <link rel="stylesheet" href="../layui/css/layui.css" media="all" />
+    <style>
+      #tipbox {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        z-index: 1000;
+      }
+      .demo-tree-index {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+    </style>
+  </head>
+
+  <body class="myCavnas">
+    <div id="canvasGroup" class="myCavnas">
+      <!-- <image src='../resource/restart.png' class="button" id='restartButton' hidden>
+        <image src='../resource/cancel.png' class="button" id='cancelButton' hidden> -->
+
+      <div id="txtarea" class="txtarea" hidden>
+        <p id="name">名字</p>
+      </div>
+      <div id="hurttxtarea" class="txtarea" hidden>
+        <p id="reason">成因</p>
+        <p id="solution">手法</p>
+      </div>
+
+      <div id="tipbox">
+        <div id="tip"></div>
+      </div>
+
+      <canvas id="mainCanvas" class="myCavnas" style="z-index: 0"></canvas>
+    </div>
+
+    <div class="loading-wrapper" id="loading">
+      <div class="loading wave">HumanBody</div>
+    </div>
+
+    <div class="layui-side-scroll">
+      <div id="test1" class="layui-elem-field layui-field-title demo-tree-index"></div>
+    </div>
+
+    <script type="x-shader/x-vertex" id="vertexshader">
+         varying vec2 vUv;
+      void main() {
+      	vUv = uv;
+      	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+      }
+    </script>
+    <script type="x-shader/x-fragment" id="fragmentshader">
+      uniform sampler2D baseTexture;
+      uniform sampler2D bloomTexture;
+      varying vec2 vUv;
+      void main() {
+           gl_FragColor = ( texture2D( baseTexture, vUv ) + vec4(1.0,1.0,1.0,0.0) * texture2D( bloomTexture, vUv )*0.5 );
+      }
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/16.3.5/Tween.min.js"></script>
+    <script src="../layui/layui.js"></script>
+    <script src="../js/index_withlist.js "></script>
+  </body>
+</html>
