@@ -51021,12 +51021,11 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
           boneArr.push(obj);
           return;
         } else if (obj.name.substr(0, 5) == 'Point') {
-          console.log(obj.name);
-
+          // console.log(obj.name);
           var _index = parseInt(obj.name.substr(5, 3));
 
-          showPointArr[_index] = obj;
-          console.log(obj.name, _index);
+          showPointArr[_index] = obj; // console.log(obj.name, index);
+
           return;
         } else if (obj.name.substr(0, 5) == 'point' && obj.name.substr(8, 6) == 'inside') {
           console.log('Point inside');
@@ -51056,11 +51055,11 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
         }
       });
       console.log('共有' + index + '块肌肉');
-      this.initUI();
-      var arr = [];
-      arr['name1'] = 123;
-      console.log(arr.length);
-      console.log(arr.name1);
+      console.log(this.muscleArr);
+      this.initUI(); // let arr = [];
+      // arr['name1'] = 123;
+      // console.log(arr.length);
+      // console.log(arr.name1)
     }
   }, {
     key: "createHurtPoint",
@@ -51088,6 +51087,7 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
   }, {
     key: "initMuscle",
     value: function initMuscle(obj) {
+      // console.log('uuuu', this.muscleArr);
       if (!this.muscleArr[obj.index]) {
         this.muscleArr[obj.index] = new Muscular(obj);
         this.muscleArr.indexArr.push(obj.index);
@@ -51095,7 +51095,7 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
         this.muscleArr[obj.index].addMesh(obj);
       }
 
-      this.muscleArr.push(new Muscular(obj));
+      this.muscleArr.push(new Muscular(obj)); // console.log('tttt', this.muscleArr);
     }
   }, {
     key: "initUI",

@@ -35,7 +35,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
     this.scene.add(body);
     this.camera.far = 1000;
 
-    this.camera.position.set(0, 1.4, 1.2);
     this.camera.position.set(0.0, 1.0, 3.0);
     this.body = body;
     this.createBloom();
@@ -49,7 +48,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
     })
 
     let controls = new OrbitControls(this.camera, this.renderer.domElement);
-    controls.target.set(0, 1.4, 0);
+    controls.target.set(0, 1, 0);
     controls.update();
     this.controls = controls;
     this.controls.maxDistance = 8;
