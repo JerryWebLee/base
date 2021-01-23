@@ -2,7 +2,7 @@ import * as THREE from 'three/build/three.module';
 import axios from 'axios';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { CanvansRenderBase, MyClick } from './utils';
-import { nameArr } from './name'
+// import { nameArr } from './name'
 // import { CanvansRenderBase } from './utils'
 // 该类管理了产生最终视觉效果的后期处理过程链。 后期处理过程根据它们添加/插入的顺序来执行，最后一个过程会被自动渲染到屏幕上。
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
@@ -127,7 +127,8 @@ class MainCanvasRenderer extends CanvansRenderBase {
         obj.material = new THREE.MeshBasicMaterial({
           map: obj.material.map,
           transparent: true,
-          opacity: 0.5
+          // opacity: 0.5
+          opacity: 1
         })
 
         hightLightArr.push(obj);
@@ -214,27 +215,54 @@ class MainCanvasRenderer extends CanvansRenderBase {
   }
 
   renderTreeUI(data) {
-    const that = this;
+    // const that = this;
     layui.use('tree', function () {
       const tree = layui.tree;
       //渲染
       const inst1 = tree.render({
-        elem: '#test1'  //绑定元素
-        , data: data,
+        elem: '#test1',
+        data: data,
         showCheckbox: true,
         id: "mainTree",
-        // accordion:true,
-        // click: this.handleElementClick.bind(this),
-        // oncheck: this.handleElementCheck.bind(this)
+        // accordion: true,
+        click: this.handleElementClick.bind(this),
+        oncheck: this.handleElementCheck.bind(this)
       });
       this.uiTree = tree;
     }.bind(this))
   }
+  // 点击事件
+  handleElementClick(obj) {
+    console.log('点击事件');
+    console.log(obj);
+    // 显示对应的肌肉块
+    if (obj.state === 'open') {
 
+    } else {
+
+    }
+  }
+  // 选中事件
+  handleElementCheck(obj) {
+    console.log('选中事件');
+    console.log(obj);
+    console.log(obj.checked);
+    if (obj.checked) {
+      // 皮肤消失
+      this.skinArr.forEach((skin) => { skin.visible = false })
+      // 选中的肌肉高亮显示
+    } else {
+      // 肌肉恢复默认显示
+      this.skinArr.forEach((skin) => { skin.visible = true })
+      // 皮肤显示
+    }
+  }
+  // 重载树组件
   reloadTreeUI(index, classIndex) {
     if (!this.uiTree) {
       return;
     }
+    console.log(this.uiTree);
     this.createFirstElement();
     this.createSecondElement();
     for (let i = 0; i < this.uiData.length; i++) {
@@ -246,6 +274,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
     console.log('reload')
   }
 
+  // 事件绑定
   createMouseEvent() {
     let canvasClick = new MyClick(this.canvas);
     const envetTarget = canvasClick;
@@ -257,35 +286,37 @@ class MainCanvasRenderer extends CanvansRenderBase {
     envetTarget.addEventListener('mouseup', this.onMouseUP.bind(this));
     envetTarget.addEventListener('wheel', this.onMouseWheel.bind(this));
   }
-
+  // 鼠标移动时,皮肤和肌肉高亮显示
   onMouseMove(e) {
     this.mouseState = e;
+    // console.log(this.mouseState);
+    // 如果鼠标按下,开启拖拽事件
     if (this.mouseDown) {
       // console.log('drag');
       this.dragChange = true
       this.didDrag = true;
       this.showPoints_HideAll();
-
     }
+    // 材质的高亮显示
     else {
       let obj = this.getMouseTarget();
+      // console.log('鼠标在肌肉上时,肌肉高亮:');
+      // console.log(obj);
       if (obj)
         this.highLightToogle.toogle(obj.name, this.mouseState);
       else {
         this.highLightToogle.unLightAll();
       }
-
     }
   }
-
+  // 鼠标按下事件,开始拖拽
   onMouseDown(e) {
     // console.log('start drag')
     this.mouseDown = true;
     this.dragChange = false;
     this.didDrag = false;
-
   }
-
+  // 鼠标抬起事件,结束拖拽
   onMouseUP(e) {
     // console.log('end  drag')
     this.mouseDown = false
@@ -293,12 +324,12 @@ class MainCanvasRenderer extends CanvansRenderBase {
       this.showPointsTest();
     }
   }
-
+  // 鼠标滚动时,根据模型更新图标点的位置
   onMouseWheel(e) {
     // console.log('my whell handle')
     this.showPointsTest();
   }
-
+  // 单击移动camera2镜头
   onMouseClick(e) {
     if (this.didDrag)
       return;
@@ -307,22 +338,22 @@ class MainCanvasRenderer extends CanvansRenderBase {
       let obj = this.getMouseTarget();
       if (obj) {
         this.moveCamera2Target(obj);
-
       }
-
     }.bind(this), 300);
   }
-
+  // 双击皮肤和肌肉的隐藏
   onMouseDBClick(e) {
     clearTimeout(this.clickTimer);
     let obj = this.getMouseTarget();
+    // console.log(obj);
     if (obj) {
       if (obj.name.match('Skin')) {
+        // console.log(obj);
+        // console.log(this.skinArr);
         obj.visible = false;
-
       }
-
-      obj.material.opacity = 0.5
+      // obj.material.opacity = 0.5
+      obj.material.opacity = 1
       obj.material.transparent = true;
       obj.visible = false;
       this.showPointsTest();
@@ -330,7 +361,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
     }
     // console.log('dbclick');
   }
-
+  // 图标点的显示隐藏
   showPointsTest() {
 
     this.showPointArr.forEach((point) => {
@@ -340,13 +371,13 @@ class MainCanvasRenderer extends CanvansRenderBase {
         point.show();
       }
       else {
-        // console.log(222) 
+        // console.log(222)
         point.hide();
       }
       point.updataImagePos()
     })
   }
-
+  // 三维模型对应损伤点的显示隐藏
   showPointVisibleTest(obj) {
     let v = obj.getWorldPosition(new THREE.Vector3(0, 0, 0));
     v.sub(this.camera.position);
@@ -371,7 +402,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
       return true;
     }
   }
-
+  // 将camera2移动到鼠标选定的目标
   moveCamera2Target(obj) {
     // console.log(this.camera);
     let targetV = obj.localToWorld(new THREE.Vector3());
@@ -391,11 +422,12 @@ class MainCanvasRenderer extends CanvansRenderBase {
 
     // }
   }
-
+  // 获取鼠标事件触发的目标
   getMouseTarget() {
     let obj = this.rayTest(this.mouseState, this.skinArr);
     if (obj) {
       // this.highLightToogle.toogle(obj.name);
+      // console.log(obj);
       return obj;
     }
     else {
@@ -414,7 +446,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
       point.hide();
     })
   }
-
+  // 图标点点击取消事件
   cancelClick() {
     if (this.hideArr.length > 0) {
       let obj = this.hideArr.pop();
@@ -426,7 +458,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
       this.showPointsTest();
     }
   }
-
+  // 图标点重新点击事件
   restartClick() {
     while (this.hideArr.length > 0) {
       let obj = this.hideArr.pop();
@@ -534,7 +566,6 @@ class highLightToogle {
     // console.log(arr);
     for (let i = 0; i < arr.length; i++) {
       if (arr[i].material.length) {
-        // console.log(arr[i])
         if (!highLightMatArr[arr[i].material[0].name]) {
           highLightMat = [];
           let mat = arr[i].material[0].clone();
@@ -553,7 +584,7 @@ class highLightToogle {
           highLightMatArr[arr[i].material.name] = highLightMat;
         }
         highLightMat = highLightMatArr[arr[i].material.name];
-
+        // console.log(highLightMatArr);
       }
 
       let element = new highLightToogleElement(arr[i], highLightMat);
@@ -731,8 +762,6 @@ class showPoint_base {
   }
   onClick(e) {
     console.log(this.obj.name);
-
-
   }
   onDblClick(e) {
     // console.log(e)
@@ -801,7 +830,8 @@ class showPoint extends showPoint_base {
     })
 
     this.newMat.transparent = true;
-    this.newMat.opacity = 0.5;
+    // this.newMat.opacity = 0.5;
+    this.newMat.opacity = 1;
   }
 
 

@@ -46149,16 +46149,7 @@ function _getdeviceType() {
 
 exports.CanvansRenderBase = CanvansRenderBase;
 exports.MyClick = MyClick;
-},{"@babel/runtime/regenerator":"../../node_modules/@babel/runtime/regenerator/index.js","@babel/runtime/helpers/asyncToGenerator":"../../node_modules/@babel/runtime/helpers/asyncToGenerator.js","@babel/runtime/helpers/classCallCheck":"../../node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/createClass":"../../node_modules/@babel/runtime/helpers/createClass.js","three/build/three.module":"../../node_modules/three/build/three.module.js","axios":"../../node_modules/axios/index.js","three/examples/jsm/controls/OrbitControls":"../../node_modules/three/examples/jsm/controls/OrbitControls.js","three/examples/jsm/loaders/FBXLoader":"../../node_modules/three/examples/jsm/loaders/FBXLoader.js","three/examples/jsm/loaders/GLTFLoader":"../../node_modules/three/examples/jsm/loaders/GLTFLoader.js","three/examples/jsm/loaders/OBJLoader":"../../node_modules/three/examples/jsm/loaders/OBJLoader.js","three/examples/jsm/loaders/HDRCubeTextureLoader":"../../node_modules/three/examples/jsm/loaders/HDRCubeTextureLoader.js","three/examples/jsm/pmrem/PMREMGenerator":"../../node_modules/three/examples/jsm/pmrem/PMREMGenerator.js","three/examples/jsm/pmrem/PMREMCubeUVPacker":"../../node_modules/three/examples/jsm/pmrem/PMREMCubeUVPacker.js","./utils":"../js/utils.js"}],"../js/name.js":[function(require,module,exports) {
-var nameArr = [];
-var nameGroup1 = ["枕额肌(额腹)", "眼轮匝肌", "提上唇鼻翼肌", "提上唇肌", "颧小肌", "口轮匝肌", "颧大肌", "降下唇肌", "二腹肌(前腹)", "下颌舌骨肌", "舌骨舌肌", "茎突舌骨肌", "胸骨甲状肌", "肩胛舌骨肌", "胸骨舌骨肌", "胸锁乳突肌", "前斜角肌", "肩胛舌骨肌", "斜方肌", "二腹肌(后腹)", "咬肌", "枕额肌(枕腹)", "翼外肌", "颊肌", "中斜角肌", "后斜角肌", "肩胛提肌", "颞肌", ""];
-var nameGroup2 = ["斜方肌", "颈夹肌", "上后锯肌", "冈上肌", "冈下肌", "小圆肌", "大圆肌", "头半棘肌", "头夹肌", "肩胛提肌", "小菱形肌", "大菱形肌", "三角肌", "阔背肌", "头上斜肌", "头后大直肌", "头下斜肌", "颈半棘肌", "头后小直肌", "头最长肌", "后斜角肌"];
-var nameGroup5 = ["背阔肌", "腹外斜肌", "臀大肌", "棘肌", "最长肌", "肋间外肌", "髂肋肌", "腹内斜肌", "前锯肌", "下后锯肌", "颈最长肌", "颈髂肋肌", "胸最长肌", "胸髂肋肌", "腰髂肋肌", "腹外斜肌", "腹内斜肌", "肋提肌", "横突间肌", "腰方肌", "多裂肌", "腹内斜肌"];
-nameArr[0] = nameGroup1;
-nameArr[1] = nameGroup2;
-nameArr[4] = nameGroup5;
-exports.nameArr = nameArr;
-},{}],"../../node_modules/three/examples/jsm/shaders/CopyShader.js":[function(require,module,exports) {
+},{"@babel/runtime/regenerator":"../../node_modules/@babel/runtime/regenerator/index.js","@babel/runtime/helpers/asyncToGenerator":"../../node_modules/@babel/runtime/helpers/asyncToGenerator.js","@babel/runtime/helpers/classCallCheck":"../../node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/createClass":"../../node_modules/@babel/runtime/helpers/createClass.js","three/build/three.module":"../../node_modules/three/build/three.module.js","axios":"../../node_modules/axios/index.js","three/examples/jsm/controls/OrbitControls":"../../node_modules/three/examples/jsm/controls/OrbitControls.js","three/examples/jsm/loaders/FBXLoader":"../../node_modules/three/examples/jsm/loaders/FBXLoader.js","three/examples/jsm/loaders/GLTFLoader":"../../node_modules/three/examples/jsm/loaders/GLTFLoader.js","three/examples/jsm/loaders/OBJLoader":"../../node_modules/three/examples/jsm/loaders/OBJLoader.js","three/examples/jsm/loaders/HDRCubeTextureLoader":"../../node_modules/three/examples/jsm/loaders/HDRCubeTextureLoader.js","three/examples/jsm/pmrem/PMREMGenerator":"../../node_modules/three/examples/jsm/pmrem/PMREMGenerator.js","three/examples/jsm/pmrem/PMREMCubeUVPacker":"../../node_modules/three/examples/jsm/pmrem/PMREMCubeUVPacker.js","./utils":"../js/utils.js"}],"../../node_modules/three/examples/jsm/shaders/CopyShader.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -49971,8 +49962,6 @@ var _OrbitControls = require("three/examples/jsm/controls/OrbitControls");
 
 var _utils = require("./utils");
 
-var _name = require("./name");
-
 var _EffectComposer = require("three/examples/jsm/postprocessing/EffectComposer");
 
 var _RenderPass = require("three/examples/jsm/postprocessing/RenderPass");
@@ -50137,7 +50126,8 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
           obj.material = new THREE.MeshBasicMaterial({
             map: obj.material.map,
             transparent: true,
-            opacity: 0.5
+            // opacity: 0.5
+            opacity: 1
           });
           hightLightArr.push(obj);
           muscleArr[obj.index] = obj;
@@ -50228,23 +50218,52 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
   }, {
     key: "renderTreeUI",
     value: function renderTreeUI(data) {
-      var that = this;
+      // const that = this;
       layui.use('tree', function () {
         var tree = layui.tree; //渲染
 
         var inst1 = tree.render({
-          elem: '#test1' //绑定元素
-          ,
+          elem: '#test1',
           data: data,
           showCheckbox: true,
-          id: "mainTree" // accordion:true,
-          // click: this.handleElementClick.bind(this),
-          // oncheck: this.handleElementCheck.bind(this)
-
+          id: "mainTree",
+          // accordion: true,
+          click: this.handleElementClick.bind(this),
+          oncheck: this.handleElementCheck.bind(this)
         });
         this.uiTree = tree;
       }.bind(this));
-    }
+    } // 点击事件
+
+  }, {
+    key: "handleElementClick",
+    value: function handleElementClick(obj) {
+      console.log('点击事件');
+      console.log(obj); // 显示对应的肌肉块
+
+      if (obj.state === 'open') {} else {}
+    } // 选中事件
+
+  }, {
+    key: "handleElementCheck",
+    value: function handleElementCheck(obj) {
+      console.log('选中事件');
+      console.log(obj);
+      console.log(obj.checked);
+
+      if (obj.checked) {
+        // 皮肤消失
+        this.skinArr.forEach(function (skin) {
+          skin.visible = false;
+        }); // 选中的肌肉高亮显示
+      } else {
+        // 肌肉恢复默认显示
+        this.skinArr.forEach(function (skin) {
+          skin.visible = true;
+        }); // 皮肤显示
+      }
+    } // 重载树组件
+
   }, {
     key: "reloadTreeUI",
     value: function reloadTreeUI(index, classIndex) {
@@ -50252,6 +50271,7 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
         return;
       }
 
+      console.log(this.uiTree);
       this.createFirstElement();
       this.createSecondElement();
 
@@ -50263,7 +50283,8 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
       this.renderTreeUI(this.uiData);
       this.uiTree.setChecked('mainTree', index);
       console.log('reload');
-    }
+    } // 事件绑定
+
   }, {
     key: "createMouseEvent",
     value: function createMouseEvent() {
@@ -50276,24 +50297,30 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
       envetTarget.addEventListener('mousemove', this.onMouseMove.bind(this));
       envetTarget.addEventListener('mouseup', this.onMouseUP.bind(this));
       envetTarget.addEventListener('wheel', this.onMouseWheel.bind(this));
-    }
+    } // 鼠标移动时,皮肤和肌肉高亮显示
+
   }, {
     key: "onMouseMove",
     value: function onMouseMove(e) {
-      this.mouseState = e;
+      this.mouseState = e; // console.log(this.mouseState);
+      // 如果鼠标按下,开启拖拽事件
 
       if (this.mouseDown) {
         // console.log('drag');
         this.dragChange = true;
         this.didDrag = true;
         this.showPoints_HideAll();
-      } else {
-        var obj = this.getMouseTarget();
-        if (obj) this.highLightToogle.toogle(obj.name, this.mouseState);else {
-          this.highLightToogle.unLightAll();
+      } // 材质的高亮显示
+      else {
+          var obj = this.getMouseTarget(); // console.log('鼠标在肌肉上时,肌肉高亮:');
+          // console.log(obj);
+
+          if (obj) this.highLightToogle.toogle(obj.name, this.mouseState);else {
+            this.highLightToogle.unLightAll();
+          }
         }
-      }
-    }
+    } // 鼠标按下事件,开始拖拽
+
   }, {
     key: "onMouseDown",
     value: function onMouseDown(e) {
@@ -50301,7 +50328,8 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
       this.mouseDown = true;
       this.dragChange = false;
       this.didDrag = false;
-    }
+    } // 鼠标抬起事件,结束拖拽
+
   }, {
     key: "onMouseUP",
     value: function onMouseUP(e) {
@@ -50311,13 +50339,15 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
       if (this.dragChange) {
         this.showPointsTest();
       }
-    }
+    } // 鼠标滚动时,根据模型更新图标点的位置
+
   }, {
     key: "onMouseWheel",
     value: function onMouseWheel(e) {
       // console.log('my whell handle')
       this.showPointsTest();
-    }
+    } // 单击移动camera2镜头
+
   }, {
     key: "onMouseClick",
     value: function onMouseClick(e) {
@@ -50330,25 +50360,30 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
           this.moveCamera2Target(obj);
         }
       }.bind(this), 300);
-    }
+    } // 双击皮肤和肌肉的隐藏
+
   }, {
     key: "onMouseDBClick",
     value: function onMouseDBClick(e) {
       clearTimeout(this.clickTimer);
-      var obj = this.getMouseTarget();
+      var obj = this.getMouseTarget(); // console.log(obj);
 
       if (obj) {
         if (obj.name.match('Skin')) {
+          // console.log(obj);
+          // console.log(this.skinArr);
           obj.visible = false;
-        }
+        } // obj.material.opacity = 0.5
 
-        obj.material.opacity = 0.5;
+
+        obj.material.opacity = 1;
         obj.material.transparent = true;
         obj.visible = false;
         this.showPointsTest();
       } // console.log('dbclick');
 
-    }
+    } // 图标点的显示隐藏
+
   }, {
     key: "showPointsTest",
     value: function showPointsTest() {
@@ -50359,13 +50394,14 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
           // console.log(1111)
           point.show();
         } else {
-          // console.log(222) 
+          // console.log(222)
           point.hide();
         }
 
         point.updataImagePos();
       });
-    }
+    } // 三维模型对应损伤点的显示隐藏
+
   }, {
     key: "showPointVisibleTest",
     value: function showPointVisibleTest(obj) {
@@ -50390,7 +50426,8 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
       } else {
         return true;
       }
-    }
+    } // 将camera2移动到鼠标选定的目标
+
   }, {
     key: "moveCamera2Target",
     value: function moveCamera2Target(obj) {
@@ -50409,7 +50446,8 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
       //     // console.log(targetV.add(dir))
       //     this.camera.position.copy(targetV.add(dir));
       // }
-    }
+    } // 获取鼠标事件触发的目标
+
   }, {
     key: "getMouseTarget",
     value: function getMouseTarget() {
@@ -50417,6 +50455,7 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
 
       if (obj) {
         // this.highLightToogle.toogle(obj.name);
+        // console.log(obj);
         return obj;
       } else {
         obj = this.rayTest(this.mouseState, this.boxArr);
@@ -50434,7 +50473,8 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
       this.showPointArr.forEach(function (point) {
         point.hide();
       });
-    }
+    } // 图标点点击取消事件
+
   }, {
     key: "cancelClick",
     value: function cancelClick() {
@@ -50449,7 +50489,8 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
 
         this.showPointsTest();
       }
-    }
+    } // 图标点重新点击事件
+
   }, {
     key: "restartClick",
     value: function restartClick() {
@@ -50559,7 +50600,6 @@ var highLightToogle = /*#__PURE__*/function () {
 
     for (var i = 0; i < arr.length; i++) {
       if (arr[i].material.length) {
-        // console.log(arr[i])
         if (!highLightMatArr[arr[i].material[0].name]) {
           highLightMat = [];
           var mat = arr[i].material[0].clone();
@@ -50579,7 +50619,7 @@ var highLightToogle = /*#__PURE__*/function () {
           highLightMatArr[arr[i].material.name] = highLightMat;
         }
 
-        highLightMat = highLightMatArr[arr[i].material.name];
+        highLightMat = highLightMatArr[arr[i].material.name]; // console.log(highLightMatArr);
       }
 
       var element = new highLightToogleElement(arr[i], highLightMat); // console.log(arr[i].name)
@@ -50836,8 +50876,9 @@ var showPoint = /*#__PURE__*/function (_showPoint_base) {
           USE_COLOR: true
         }
       });
-      this.newMat.transparent = true;
-      this.newMat.opacity = 0.5;
+      this.newMat.transparent = true; // this.newMat.opacity = 0.5;
+
+      this.newMat.opacity = 1;
     }
   }, {
     key: "creatEvent",
@@ -50949,7 +50990,7 @@ var clickObjBase = function clickObjBase() {
 
 exports.MainCanvasRenderer = MainCanvasRenderer;
 exports.showPoint = showPoint;
-},{"@babel/runtime/helpers/get":"../../node_modules/@babel/runtime/helpers/get.js","@babel/runtime/regenerator":"../../node_modules/@babel/runtime/regenerator/index.js","@babel/runtime/helpers/asyncToGenerator":"../../node_modules/@babel/runtime/helpers/asyncToGenerator.js","@babel/runtime/helpers/classCallCheck":"../../node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/createClass":"../../node_modules/@babel/runtime/helpers/createClass.js","@babel/runtime/helpers/inherits":"../../node_modules/@babel/runtime/helpers/inherits.js","@babel/runtime/helpers/possibleConstructorReturn":"../../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js","@babel/runtime/helpers/getPrototypeOf":"../../node_modules/@babel/runtime/helpers/getPrototypeOf.js","three/build/three.module":"../../node_modules/three/build/three.module.js","axios":"../../node_modules/axios/index.js","three/examples/jsm/controls/OrbitControls":"../../node_modules/three/examples/jsm/controls/OrbitControls.js","./utils":"../js/utils.js","./name":"../js/name.js","three/examples/jsm/postprocessing/EffectComposer":"../../node_modules/three/examples/jsm/postprocessing/EffectComposer.js","three/examples/jsm/postprocessing/RenderPass":"../../node_modules/three/examples/jsm/postprocessing/RenderPass.js","three/examples/jsm/postprocessing/ShaderPass":"../../node_modules/three/examples/jsm/postprocessing/ShaderPass.js","three/examples/jsm/postprocessing/UnrealBloomPass":"../../node_modules/three/examples/jsm/postprocessing/UnrealBloomPass.js","dat.gui":"../../node_modules/dat.gui/build/dat.gui.module.js","./shader":"../js/shader.js"}],"../js/index_bloom.js":[function(require,module,exports) {
+},{"@babel/runtime/helpers/get":"../../node_modules/@babel/runtime/helpers/get.js","@babel/runtime/regenerator":"../../node_modules/@babel/runtime/regenerator/index.js","@babel/runtime/helpers/asyncToGenerator":"../../node_modules/@babel/runtime/helpers/asyncToGenerator.js","@babel/runtime/helpers/classCallCheck":"../../node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/createClass":"../../node_modules/@babel/runtime/helpers/createClass.js","@babel/runtime/helpers/inherits":"../../node_modules/@babel/runtime/helpers/inherits.js","@babel/runtime/helpers/possibleConstructorReturn":"../../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js","@babel/runtime/helpers/getPrototypeOf":"../../node_modules/@babel/runtime/helpers/getPrototypeOf.js","three/build/three.module":"../../node_modules/three/build/three.module.js","axios":"../../node_modules/axios/index.js","three/examples/jsm/controls/OrbitControls":"../../node_modules/three/examples/jsm/controls/OrbitControls.js","./utils":"../js/utils.js","three/examples/jsm/postprocessing/EffectComposer":"../../node_modules/three/examples/jsm/postprocessing/EffectComposer.js","three/examples/jsm/postprocessing/RenderPass":"../../node_modules/three/examples/jsm/postprocessing/RenderPass.js","three/examples/jsm/postprocessing/ShaderPass":"../../node_modules/three/examples/jsm/postprocessing/ShaderPass.js","three/examples/jsm/postprocessing/UnrealBloomPass":"../../node_modules/three/examples/jsm/postprocessing/UnrealBloomPass.js","dat.gui":"../../node_modules/dat.gui/build/dat.gui.module.js","./shader":"../js/shader.js"}],"../js/index_bloom.js":[function(require,module,exports) {
 "use strict";
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
