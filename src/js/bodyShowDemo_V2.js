@@ -223,6 +223,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
   }
 
   onMouseClick(e) {
+    console.log('点击事件');
     if (this.didDrag)
       return;
     clearInterval(this.clickTimer);
@@ -232,9 +233,9 @@ class MainCanvasRenderer extends CanvansRenderBase {
       if (obj) {
         this.moveCamera2Target(obj);
         console.log(obj.name);
-        // obj.visible=false
-        // obj.material.transparent=true;
-        // obj.material.opacity=0.5;
+        // obj.visible = false
+        // obj.material.transparent = true;
+        // obj.material.opacity = 0.5;
         if (this.toogle.currentElement)
           if (obj.name === this.toogle.currentElement.obj.name) {
 

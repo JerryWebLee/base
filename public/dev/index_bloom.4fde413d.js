@@ -47418,8 +47418,8 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
         this.showPoints_HideAll();
       } // 材质的高亮显示
       else {
-          var obj = this.getMouseTarget(); // console.log('鼠标在肌肉上时,肌肉高亮:');
-          // console.log(obj);
+          var obj = this.getMouseTarget();
+          console.log(obj);
 
           if (obj) {
             // console.log(obj);
@@ -48002,6 +48002,7 @@ var showPoint = /*#__PURE__*/function (_showPoint_base) {
     value: function onMouseOver(e) {
       (0, _get2.default)((0, _getPrototypeOf2.default)(showPoint.prototype), "onMouseOver", this).call(this, e);
       this.manager.highLightToogle.unLightAll();
+      console.log('mmmm');
     }
   }, {
     key: "onMouseOut",

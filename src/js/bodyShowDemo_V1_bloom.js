@@ -309,8 +309,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
     // 材质的高亮显示
     else {
       let obj = this.getMouseTarget();
-      // console.log('鼠标在肌肉上时,肌肉高亮:');
-      // console.log(obj);
+      console.log(obj);
       if (obj) {
         // console.log(obj);
         this.highLightToogle.toogle(obj.name, this.mouseState);
@@ -856,6 +855,7 @@ class showPoint extends showPoint_base {
   onMouseOver(e) {
     super.onMouseOver(e);
     this.manager.highLightToogle.unLightAll();
+    console.log('mmmm');
   }
   onMouseOut(e) {
     super.onMouseOut(e);
