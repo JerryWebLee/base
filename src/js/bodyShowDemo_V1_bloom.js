@@ -229,13 +229,11 @@ class MainCanvasRenderer extends CanvansRenderBase {
         oncheck: this.handleElementCheck.bind(this)
       });
       this.uiTree = tree;
-      console.log('data:');
     }.bind(this))
   }
   // 点击事件
   handleElementClick(obj) {
     console.log('点击事件');
-    console.log(obj);
     // 显示对应的肌肉块
     if (obj.state === 'open') {
 
@@ -246,8 +244,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
   // 选中事件
   handleElementCheck(obj) {
     console.log('选中事件');
-    console.log(obj);
-    console.log(obj.elem[0].previousElementSibling);
     if ((obj.data.type === 'firstClass' && obj.checked) || (obj.data.type === 'secondClass')) {
       // 皮肤消失
       this.skinArr.forEach((skin) => { skin.visible = false })
