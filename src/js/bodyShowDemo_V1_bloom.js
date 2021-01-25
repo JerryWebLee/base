@@ -235,29 +235,22 @@ class MainCanvasRenderer extends CanvansRenderBase {
   handleElementClick(obj) {
     console.log('点击执行');
     let classIndex = obj.data.class
-
-    for (let i = 0; i < this.uiData.length; i++) {
-      this.uiData[i].spread = false;
-    }
-    this.uiData[classIndex].spread = true;
     if (obj.data.type === 'secondeClass') {
-      if (this.index !== obj.data.id) {
-        console.log('更新树');
+      if (this.flag !== obj.data.id) {
         this.flag = obj.data.id
         this.reloadTreeUI(this.flag, classIndex);
         this.checked = true
       }
       else {
-        console.log('回到初始界面');
         this.checked = false
         this.flag = -1
         this.reloadTreeUI(this.flag, classIndex);
       }
-
       if (!this.checked) {
-        console.log('执行选择酷酷');
         this.uiTree.setChecked('mainTree', this.flag);
       }
+
+      this.skinArr.forEach((skin) => { skin.visible = !this.checked })
     }
   }
 

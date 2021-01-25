@@ -47328,32 +47328,29 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
   }, {
     key: "handleElementClick",
     value: function handleElementClick(obj) {
+      var _this3 = this;
+
       console.log('点击执行');
       var classIndex = obj.data.class;
 
-      for (var i = 0; i < this.uiData.length; i++) {
-        this.uiData[i].spread = false;
-      }
-
-      this.uiData[classIndex].spread = true;
-
       if (obj.data.type === 'secondeClass') {
-        if (this.index !== obj.data.id) {
-          console.log('更新树');
+        if (this.flag !== obj.data.id) {
           this.flag = obj.data.id;
           this.reloadTreeUI(this.flag, classIndex);
           this.checked = true;
         } else {
-          console.log('回到初始界面');
           this.checked = false;
           this.flag = -1;
           this.reloadTreeUI(this.flag, classIndex);
         }
 
         if (!this.checked) {
-          console.log('执行选择酷酷');
           this.uiTree.setChecked('mainTree', this.flag);
         }
+
+        this.skinArr.forEach(function (skin) {
+          skin.visible = !_this3.checked;
+        });
       }
     }
   }, {
@@ -47499,10 +47496,10 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
   }, {
     key: "showPointsTest",
     value: function showPointsTest() {
-      var _this3 = this;
+      var _this4 = this;
 
       this.showPointArr.forEach(function (point) {
-        if (_this3.showPointVisibleTest(point.obj)) {
+        if (_this4.showPointVisibleTest(point.obj)) {
           // console.log(1111)
           point.show();
         } else {
@@ -47933,22 +47930,22 @@ var showPoint = /*#__PURE__*/function (_showPoint_base) {
   var _super2 = _createSuper(showPoint);
 
   function showPoint(obj, hurtObj, manager, canvas, camera) {
-    var _this4;
+    var _this5;
 
     var iconUrl = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : '../resource/point5.png';
     var baseSize = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : [15, 15];
     var bigSize = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : [20, 20];
     (0, _classCallCheck2.default)(this, showPoint);
-    _this4 = _super2.call(this, obj, canvas, camera, iconUrl, baseSize = [15, 15], bigSize = [20, 20]); // console.log(obj, hurtObj)
+    _this5 = _super2.call(this, obj, canvas, camera, iconUrl, baseSize = [15, 15], bigSize = [20, 20]); // console.log(obj, hurtObj)
 
-    _this4.hurtObj = hurtObj; // this.hurtObj.visible=false;
+    _this5.hurtObj = hurtObj; // this.hurtObj.visible=false;
     // this.hurtObj.bloomObj.visible=false;
 
-    _this4.manager = manager;
+    _this5.manager = manager;
 
-    _this4.creatEvent();
+    _this5.creatEvent();
 
-    return _this4;
+    return _this5;
   }
 
   (0, _createClass2.default)(showPoint, [{
@@ -48014,7 +48011,7 @@ var showPoint = /*#__PURE__*/function (_showPoint_base) {
   }, {
     key: "onClick",
     value: function onClick(e) {
-      var _this5 = this;
+      var _this6 = this;
 
       // console.log(this.hurtObj.name);
       this.hurtObj.bloomObj.layers.toggle(BLOOM_SCENE);
@@ -48026,7 +48023,7 @@ var showPoint = /*#__PURE__*/function (_showPoint_base) {
         this.manager.moveCamera2Target(this.hurtObj);
         this.muscleArr.forEach(function (obj) {
           // console.log(obj.index)
-          obj.material = _this5.newMat;
+          obj.material = _this6.newMat;
           obj.renderOrder = 1;
           obj.highLightAble = false;
           obj.visible = true;
@@ -48037,7 +48034,7 @@ var showPoint = /*#__PURE__*/function (_showPoint_base) {
         this.hurtObj.visible = false;
         this.hurtObj.bloomObj.visible = false;
         this.muscleArr.forEach(function (obj) {
-          obj.material = _this5.oldMat;
+          obj.material = _this6.oldMat;
           obj.renderOrder = 0;
           obj.highLightAble = true;
           obj.renderOrder = 10;
