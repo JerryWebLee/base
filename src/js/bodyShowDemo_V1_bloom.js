@@ -233,7 +233,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
   }
 
   handleElementClick(obj) {
-    console.log('点击执行');
     let classIndex = obj.data.class
     if (obj.data.type === 'secondeClass') {
       if (this.flag !== obj.data.id) {
@@ -255,8 +254,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
   }
 
   handleElementCheck(obj) {
-    console.log('选择执行:');
-    console.log(obj);
+    // console.log(obj);
     this.checked = obj.ckecked
     if (obj.data.type === 'secondeClass') {
       this.reloadTreeUI(obj.data.id, obj.data.class);
@@ -274,12 +272,11 @@ class MainCanvasRenderer extends CanvansRenderBase {
     this.uiData[classIndex].spread = true;
     if (this.index !== index) {
       this.index = index
-      console.log('sss');
       this.renderTreeUI(this.uiData);
       this.uiTree.setChecked('mainTree', index);
     }
 
-    console.log('reload')
+    // console.log('reload')
   }
 
   // 事件绑定

@@ -47330,7 +47330,6 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
     value: function handleElementClick(obj) {
       var _this3 = this;
 
-      console.log('点击执行');
       var classIndex = obj.data.class;
 
       if (obj.data.type === 'secondeClass') {
@@ -47356,8 +47355,7 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
   }, {
     key: "handleElementCheck",
     value: function handleElementCheck(obj) {
-      console.log('选择执行:');
-      console.log(obj);
+      // console.log(obj);
       this.checked = obj.ckecked;
 
       if (obj.data.type === 'secondeClass') {
@@ -47383,12 +47381,10 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
 
       if (this.index !== index) {
         this.index = index;
-        console.log('sss');
         this.renderTreeUI(this.uiData);
         this.uiTree.setChecked('mainTree', index);
-      }
+      } // console.log('reload')
 
-      console.log('reload');
     } // 事件绑定
 
   }, {
