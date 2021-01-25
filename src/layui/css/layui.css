@@ -2034,6 +2034,10 @@ hr {
 .layui-select-disabled .layui-edge {
   border-top-color: #d2d2d2;
 }
+/* 新增代码 */
+.layui-tree > .layui-tree-set > .layui-tree-entry > .layui-tree-main > .layui-form-checkbox {
+  display: none;
+}
 .layui-form-checkbox {
   position: relative;
   height: 30px;

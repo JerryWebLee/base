@@ -12,6 +12,7 @@ import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
 // Bloom主要用来模拟生活中的泛光或说眩光效果,通过threejs后期处理的扩展库UnrealBloomPass通道可实现一个泛光效果。
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass';
 import * as dat from 'dat.gui'
+import $ from 'jquery'
 
 
 import { hurtMuscleEffectShader } from './shader'
@@ -191,7 +192,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
         type: 'firstClass',
         spread: false,
         id: muscleClassNameArr[i],
-        // disabled:true,
+        // disabled: true,
         children: []
       }
       this.uiData.push(data);
@@ -200,8 +201,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
 
   createSecondElement() {
     let i = 0;
-    console.log(this.muscleContainer);
-    console.log(this.muscleContainer.indexArr);
     this.muscleContainer.indexArr.forEach((index) => {
       const muscle = this.muscleContainer[index];
       const data = {
@@ -233,6 +232,25 @@ class MainCanvasRenderer extends CanvansRenderBase {
     }.bind(this))
   }
 
+  handleElementClick(obj) {
+    if (obj.data.type === 'secondeClass') {
+      this.reloadTreeUI(obj.data.id, obj.data.class);
+    }
+  }
+
+  handleElementCheck(obj) {
+    if (this.flag == 0) {
+      this.flag++
+      if (obj.data.type === 'secondeClass') {
+        this.reloadTreeUI(obj.data.id, obj.data.class);
+      }
+    }
+    else {
+      this.flag = 0;
+      return
+    }
+  }
+
   reloadTreeUI(index, classIndex) {
     if (!this.uiTree) {
       return;
@@ -246,27 +264,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
     this.renderTreeUI(this.uiData);
     this.uiTree.setChecked('mainTree', index);
     console.log('reload')
-  }
-
-  handleElementClick(obj) {
-
-    if (obj.data.type === 'secondeClass') {
-      this.reloadTreeUI(obj.data.id, obj.data.class);
-    }
-  }
-
-  handleElementCheck(obj) {
-
-    if (this.flag == 0) {
-      this.flag++
-      if (obj.data.type === 'secondeClass') {
-        this.reloadTreeUI(obj.data.id, obj.data.class);
-      }
-    }
-    else {
-      this.flag = 0;
-      return
-    }
   }
 
   // 事件绑定
