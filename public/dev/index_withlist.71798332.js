@@ -50931,7 +50931,7 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
             switch (_context.prev = _context.next) {
               case 0:
                 _context.next = 2;
-                return this.loadFBX('../resource/models/ALL3.FBX');
+                return this.loadFBX('../resource/models/ALL2.FBX');
 
               case 2:
                 body = _context.sent;

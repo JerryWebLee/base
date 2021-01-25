@@ -75,8 +75,8 @@ class MainCanvasRenderer extends CanvansRenderBase {
     let allObjArr_byName = [];
     let allObjArr = [];
     let i = 0
-    this.muscleArr = []
-    this.muscleArr.indexArr = []
+    this.muscleContainer = []
+    this.muscleContainer.indexArr = []
 
     // 遍历组中的对象属性
     this.body.traverse((obj) => {
@@ -167,13 +167,13 @@ class MainCanvasRenderer extends CanvansRenderBase {
 
   initMuscle(obj) {
     // console.log(this.muscleArr);
-    if (!this.muscleArr[obj.index]) {
-      this.muscleArr[obj.index] = new Muscular(obj);
-      this.muscleArr.indexArr.push(obj.index);
+    if (!this.muscleContainer[obj.index]) {
+      this.muscleContainer[obj.index] = new Muscular(obj);
+      this.muscleContainer.indexArr.push(obj.index);
     } else {
-      this.muscleArr[obj.index].addMesh(obj);
+      this.muscleContainer[obj.index].addMesh(obj);
     }
-    this.muscleArr.push(new Muscular(obj));
+    this.muscleContainer.push(new Muscular(obj));
   }
 
   initUI() {
@@ -200,14 +200,15 @@ class MainCanvasRenderer extends CanvansRenderBase {
 
   createSecondElement() {
     let i = 0;
-    this.muscleArr.indexArr.forEach((index) => {
-      const muscle = this.muscleArr[index];
+    console.log(this.muscleContainer);
+    console.log(this.muscleContainer.indexArr);
+    this.muscleContainer.indexArr.forEach((index) => {
+      const muscle = this.muscleContainer[index];
       const data = {
         title: muscle.obj.cName,
         type: 'secondeClass',
         id: i,
         class: muscle.class
-
       }
       i++;
       this.uiData[muscle.class].children.push(data);
@@ -219,7 +220,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
     layui.use('tree', function () {
       const tree = layui.tree;
       //渲染
-      const inst1 = tree.render({
+      tree.render({
         elem: '#test1',
         data: data,
         showCheckbox: true,
@@ -231,35 +232,11 @@ class MainCanvasRenderer extends CanvansRenderBase {
       this.uiTree = tree;
     }.bind(this))
   }
-  // 点击事件
-  handleElementClick(obj) {
-    console.log('点击事件');
-    // 显示对应的肌肉块
-    if (obj.state === 'open') {
 
-    } else {
-
-    }
-  }
-  // 选中事件
-  handleElementCheck(obj) {
-    console.log('选中事件');
-    if ((obj.data.type === 'firstClass' && obj.checked) || (obj.data.type === 'secondClass')) {
-      // 皮肤消失
-      this.skinArr.forEach((skin) => { skin.visible = false })
-      // 选中的肌肉高亮显示
-    } else {
-      // 肌肉恢复默认显示
-      this.skinArr.forEach((skin) => { skin.visible = true })
-      // 皮肤显示
-    }
-  }
-  // 重载树组件
   reloadTreeUI(index, classIndex) {
     if (!this.uiTree) {
       return;
     }
-    console.log(this.uiTree);
     this.createFirstElement();
     this.createSecondElement();
     for (let i = 0; i < this.uiData.length; i++) {
@@ -269,6 +246,27 @@ class MainCanvasRenderer extends CanvansRenderBase {
     this.renderTreeUI(this.uiData);
     this.uiTree.setChecked('mainTree', index);
     console.log('reload')
+  }
+
+  handleElementClick(obj) {
+
+    if (obj.data.type === 'secondeClass') {
+      this.reloadTreeUI(obj.data.id, obj.data.class);
+    }
+  }
+
+  handleElementCheck(obj) {
+
+    if (this.flag == 0) {
+      this.flag++
+      if (obj.data.type === 'secondeClass') {
+        this.reloadTreeUI(obj.data.id, obj.data.class);
+      }
+    }
+    else {
+      this.flag = 0;
+      return
+    }
   }
 
   // 事件绑定

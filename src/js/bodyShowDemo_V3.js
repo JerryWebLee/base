@@ -30,7 +30,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
 
   async run() {
     // loadmodel createffect
-    let body = await this.loadFBX('../resource/models/ALL3.FBX');
+    let body = await this.loadFBX('../resource/models/ALL2.FBX');
     this.scene.add(body);
     this.camera.far = 1000;
     this.camera.updateProjectionMatrix();
@@ -208,7 +208,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
   createSecondElement() {
     // console.log(this.muscleArr);
     let i = 0;
-
     this.muscleArr.indexArr.forEach((index) => {
       const muscle = this.muscleArr[index];
       // console.log(muscle.obj.cName);
