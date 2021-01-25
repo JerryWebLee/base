@@ -755,7 +755,8 @@ a cite {
 }
 .layui-side-scroll {
   position: relative;
-  width: 220px;
+  /* 改变laytree宽度 */
+  width: 231px;
   height: 100%;
   overflow-x: hidden;
 }

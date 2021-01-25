@@ -51167,25 +51167,6 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
         console.log(this.uiTree);
       }.bind(this));
     }
-  }, {
-    key: "reloadTreeUI",
-    value: function reloadTreeUI(index, classIndex) {
-      if (!this.uiTree) {
-        return;
-      }
-
-      this.createFirtElement();
-      this.createSecondElement();
-
-      for (var i = 0; i < this.uiData.length; i++) {
-        this.uiData[i].spread = false;
-      }
-
-      this.uiData[classIndex].spread = true;
-      this.renderTreeUI(this.uiData);
-      this.uiTree.setChecked('mainTree', index);
-      console.log('reload');
-    }
     /* abandon 
         reloadTreeUI(index,classIndex){
             for(let i=0;i<this.uiData.length;i++){
@@ -51234,6 +51215,25 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
         this.flag = 0;
         return;
       }
+    }
+  }, {
+    key: "reloadTreeUI",
+    value: function reloadTreeUI(index, classIndex) {
+      if (!this.uiTree) {
+        return;
+      }
+
+      this.createFirtElement();
+      this.createSecondElement();
+
+      for (var i = 0; i < this.uiData.length; i++) {
+        this.uiData[i].spread = false;
+      }
+
+      this.uiData[classIndex].spread = true;
+      this.renderTreeUI(this.uiData);
+      this.uiTree.setChecked('mainTree', index);
+      console.log('reload');
     }
   }, {
     key: "createBloom",

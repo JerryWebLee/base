@@ -248,20 +248,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
     }.bind(this))
   }
 
-  reloadTreeUI(index, classIndex) {
-    if (!this.uiTree) {
-      return;
-    }
-    this.createFirtElement();
-    this.createSecondElement();
-    for (let i = 0; i < this.uiData.length; i++) {
-      this.uiData[i].spread = false;
-    }
-    this.uiData[classIndex].spread = true;
-    this.renderTreeUI(this.uiData);
-    this.uiTree.setChecked('mainTree', index);
-    console.log('reload')
-  }
+
   /* abandon 
       reloadTreeUI(index,classIndex){
           for(let i=0;i<this.uiData.length;i++){
@@ -310,6 +297,21 @@ class MainCanvasRenderer extends CanvansRenderBase {
       this.flag = 0;
       return
     }
+  }
+
+  reloadTreeUI(index, classIndex) {
+    if (!this.uiTree) {
+      return;
+    }
+    this.createFirtElement();
+    this.createSecondElement();
+    for (let i = 0; i < this.uiData.length; i++) {
+      this.uiData[i].spread = false;
+    }
+    this.uiData[classIndex].spread = true;
+    this.renderTreeUI(this.uiData);
+    this.uiTree.setChecked('mainTree', index);
+    console.log('reload')
   }
 
   createBloom() {

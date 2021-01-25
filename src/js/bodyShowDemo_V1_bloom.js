@@ -11,8 +11,7 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
 // Bloom主要用来模拟生活中的泛光或说眩光效果,通过threejs后期处理的扩展库UnrealBloomPass通道可实现一个泛光效果。
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass';
-import * as dat from 'dat.gui'
-import $ from 'jquery'
+// import * as dat from 'dat.gui'
 
 
 import { hurtMuscleEffectShader } from './shader'
@@ -181,7 +180,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
     this.createFirstElement();
     this.createSecondElement();
     this.renderTreeUI(this.uiData);
-    this.flag = 0;
   }
 
   createFirstElement() {
@@ -215,9 +213,11 @@ class MainCanvasRenderer extends CanvansRenderBase {
   }
 
   renderTreeUI(data) {
+    this.checked = false
     // const that = this;
     layui.use('tree', function () {
       const tree = layui.tree;
+      this.tree = tree
       //渲染
       tree.render({
         elem: '#test1',
@@ -233,36 +233,59 @@ class MainCanvasRenderer extends CanvansRenderBase {
   }
 
   handleElementClick(obj) {
+    console.log('点击执行');
+    let classIndex = obj.data.class
+
+    for (let i = 0; i < this.uiData.length; i++) {
+      this.uiData[i].spread = false;
+    }
+    this.uiData[classIndex].spread = true;
     if (obj.data.type === 'secondeClass') {
-      this.reloadTreeUI(obj.data.id, obj.data.class);
+      if (this.index !== obj.data.id) {
+        console.log('更新树');
+        this.flag = obj.data.id
+        this.reloadTreeUI(this.flag, classIndex);
+        this.checked = true
+      }
+      else {
+        console.log('回到初始界面');
+        this.checked = false
+        this.flag = -1
+        this.reloadTreeUI(this.flag, classIndex);
+      }
+
+      if (!this.checked) {
+        console.log('执行选择酷酷');
+        this.uiTree.setChecked('mainTree', this.flag);
+      }
     }
   }
 
   handleElementCheck(obj) {
-    if (this.flag == 0) {
-      this.flag++
-      if (obj.data.type === 'secondeClass') {
-        this.reloadTreeUI(obj.data.id, obj.data.class);
-      }
+    console.log('选择执行:');
+    console.log(obj);
+    this.checked = obj.ckecked
+    if (obj.data.type === 'secondeClass') {
+      this.reloadTreeUI(obj.data.id, obj.data.class);
     }
-    else {
-      this.flag = 0;
-      return
-    }
+    this.skinArr.forEach((skin) => { skin.visible = !obj.checked })
   }
 
   reloadTreeUI(index, classIndex) {
     if (!this.uiTree) {
       return;
     }
-    this.createFirstElement();
-    this.createSecondElement();
     for (let i = 0; i < this.uiData.length; i++) {
       this.uiData[i].spread = false;
     }
     this.uiData[classIndex].spread = true;
-    this.renderTreeUI(this.uiData);
-    this.uiTree.setChecked('mainTree', index);
+    if (this.index !== index) {
+      this.index = index
+      console.log('sss');
+      this.renderTreeUI(this.uiData);
+      this.uiTree.setChecked('mainTree', index);
+    }
+
     console.log('reload')
   }
 
@@ -294,8 +317,10 @@ class MainCanvasRenderer extends CanvansRenderBase {
       let obj = this.getMouseTarget();
       // console.log('鼠标在肌肉上时,肌肉高亮:');
       // console.log(obj);
-      if (obj)
+      if (obj) {
+        // console.log(obj);
         this.highLightToogle.toogle(obj.name, this.mouseState);
+      }
       else {
         this.highLightToogle.unLightAll();
       }
