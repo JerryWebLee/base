@@ -235,10 +235,13 @@ class MainCanvasRenderer extends CanvansRenderBase {
   handleElementClick(obj) {
     let classIndex = obj.data.class
     if (obj.data.type === 'secondeClass') {
-      if (this.flag !== obj.data.id) {
+      // console.log('index:' + this.index);
+      // console.log('id:' + obj.data.id);
+      if (this.index !== obj.data.id || !this.checked) {
         this.flag = obj.data.id
         this.reloadTreeUI(this.flag, classIndex);
         this.checked = true
+        console.log(11);
       }
       else {
         this.checked = false
@@ -255,9 +258,15 @@ class MainCanvasRenderer extends CanvansRenderBase {
 
   handleElementCheck(obj) {
     // console.log(obj);
-    this.checked = obj.ckecked
     if (obj.data.type === 'secondeClass') {
-      this.reloadTreeUI(obj.data.id, obj.data.class);
+      if (this.index !== obj.data.id) {
+        this.index = obj.data.id
+
+        this.reloadTreeUI(obj.data.id, obj.data.class);
+      }
+      this.checked = obj.checked
+      console.log(this.checked);
+
     }
     this.skinArr.forEach((skin) => { skin.visible = !obj.checked })
   }
@@ -270,13 +279,11 @@ class MainCanvasRenderer extends CanvansRenderBase {
       this.uiData[i].spread = false;
     }
     this.uiData[classIndex].spread = true;
-    if (this.index !== index) {
-      this.index = index
-      this.renderTreeUI(this.uiData);
-      this.uiTree.setChecked('mainTree', index);
-    }
 
-    // console.log('reload')
+    this.renderTreeUI(this.uiData);
+    this.uiTree.setChecked('mainTree', index);
+
+    console.log('reload')
   }
 
   // 事件绑定
