@@ -241,7 +241,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
         this.flag = obj.data.id
         this.reloadTreeUI(this.flag, classIndex);
         this.checked = true
-        console.log(11);
       }
       else {
         this.checked = false
@@ -251,7 +250,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
       if (!this.checked) {
         this.uiTree.setChecked('mainTree', this.flag);
       }
-
+      // console.log(this.checked);
       this.skinArr.forEach((skin) => { skin.visible = !this.checked })
     }
   }
@@ -261,14 +260,12 @@ class MainCanvasRenderer extends CanvansRenderBase {
     if (obj.data.type === 'secondeClass') {
       if (this.index !== obj.data.id) {
         this.index = obj.data.id
-
         this.reloadTreeUI(obj.data.id, obj.data.class);
       }
       this.checked = obj.checked
-      console.log(this.checked);
-
+      // console.log(this.checked);
     }
-    this.skinArr.forEach((skin) => { skin.visible = !obj.checked })
+    this.skinArr.forEach((skin) => { skin.visible = !this.checked })
   }
 
   reloadTreeUI(index, classIndex) {
