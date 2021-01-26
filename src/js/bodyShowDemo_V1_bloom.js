@@ -12,7 +12,7 @@ import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
 // Bloom主要用来模拟生活中的泛光或说眩光效果,通过threejs后期处理的扩展库UnrealBloomPass通道可实现一个泛光效果。
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass';
 // import * as dat from 'dat.gui'
-
+import AttrListener from './AttrListener'
 
 import { hurtMuscleEffectShader } from './shader'
 
@@ -180,6 +180,13 @@ class MainCanvasRenderer extends CanvansRenderBase {
     this.createFirstElement();
     this.createSecondElement();
     this.renderTreeUI(this.uiData);
+    this.checked = false
+    let id = -1
+    this.checkObj = {
+      checked: this.checked,
+      id
+    }
+    AttrListener(this.checkObj)
   }
 
   createFirstElement() {
@@ -213,7 +220,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
   }
 
   renderTreeUI(data) {
-    this.checked = false
     // const that = this;
     layui.use('tree', function () {
       const tree = layui.tree;
@@ -235,11 +241,10 @@ class MainCanvasRenderer extends CanvansRenderBase {
   handleElementClick(obj) {
     let classIndex = obj.data.class
     if (obj.data.type === 'secondeClass') {
-      // console.log('index:' + this.index);
-      // console.log('id:' + obj.data.id);
       if (this.index !== obj.data.id || !this.checked) {
         this.flag = obj.data.id
         this.reloadTreeUI(this.flag, classIndex);
+        // this.uiTree.setChecked('mainTree', this.flag);
         this.checked = true
       }
       else {
@@ -247,11 +252,9 @@ class MainCanvasRenderer extends CanvansRenderBase {
         this.flag = -1
         this.reloadTreeUI(this.flag, classIndex);
       }
-      if (!this.checked) {
-        this.uiTree.setChecked('mainTree', this.flag);
-      }
-      // console.log(this.checked);
       this.skinArr.forEach((skin) => { skin.visible = !this.checked })
+      this.checkObj.checked = this.checked
+      this.checkObj.id = obj.data.id
     }
   }
 
@@ -263,9 +266,12 @@ class MainCanvasRenderer extends CanvansRenderBase {
         this.reloadTreeUI(obj.data.id, obj.data.class);
       }
       this.checked = obj.checked
+      // 属性监听器
       // console.log(this.checked);
     }
     this.skinArr.forEach((skin) => { skin.visible = !this.checked })
+    this.checkObj.checked = this.checked
+    this.checkObj.id = obj.data.id
   }
 
   reloadTreeUI(index, classIndex) {
@@ -276,10 +282,8 @@ class MainCanvasRenderer extends CanvansRenderBase {
       this.uiData[i].spread = false;
     }
     this.uiData[classIndex].spread = true;
-
-    this.renderTreeUI(this.uiData);
+    this.tree.reload('mainTree', { data: this.uiData });
     this.uiTree.setChecked('mainTree', index);
-
     console.log('reload')
   }
 
