@@ -47265,7 +47265,8 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
           return;
         }
       });
-      this.initUI();
+      this.initUI(); // 疼痛点图标初始化
+
       this.showPointArr = [];
 
       for (var _i = 1; _i < showPointArr.length; _i++) {
@@ -47279,7 +47280,8 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
       this.boxArr = boxArr;
       this.boneArr = boneArr;
       this.skinArr = skinArr;
-      this.muscleArr = muscleArr;
+      this.muscleArr = muscleArr; // console.log(this.muscleArr);
+
       this.highLightToogle = new highLightToogle(hightLightArr);
       this.hideArr = [];
       var cancelButton = document.getElementById('cancelButton');
@@ -47291,7 +47293,6 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
   }, {
     key: "initMuscle",
     value: function initMuscle(obj) {
-      // console.log(this.muscleArr);
       if (!this.muscleContainer[obj.index]) {
         this.muscleContainer[obj.index] = new Muscular(obj);
         this.muscleContainer.indexArr.push(obj.index);
@@ -47304,6 +47305,7 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
   }, {
     key: "initUI",
     value: function initUI() {
+      console.log(this.muscleArr);
       this.createFirstElement();
       this.createSecondElement();
       this.renderTreeUI(this.uiData);
@@ -47314,7 +47316,8 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
         id: id
       };
       (0, _AttrListener.default)(this.checkObj);
-    }
+    } // tree父级
+
   }, {
     key: "createFirstElement",
     value: function createFirstElement() {
@@ -47331,7 +47334,8 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
         };
         this.uiData.push(data);
       }
-    }
+    } // tree子级
+
   }, {
     key: "createSecondElement",
     value: function createSecondElement() {
@@ -47350,11 +47354,12 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
 
         _this2.uiData[muscle.class].children.push(data);
       });
-    }
+    } // 渲染 tree
+
   }, {
     key: "renderTreeUI",
     value: function renderTreeUI(data) {
-      // const that = this;
+      console.log(data);
       layui.use('tree', function () {
         var tree = layui.tree;
         this.tree = tree; //渲染
@@ -47394,7 +47399,8 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
   }, {
     key: "handleElementCheck",
     value: function handleElementCheck(obj) {
-      // console.log(obj);
+      console.log(obj);
+
       if (obj.data.type === 'secondeClass') {
         if (this.index !== obj.data.id) {
           this.index = obj.data.id;
@@ -47405,7 +47411,7 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
       }
 
       this.stateChange(obj);
-    } // 属性监听器
+    } // 状态改变
 
   }, {
     key: "stateChange",
@@ -47417,7 +47423,8 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
       });
       this.checkObj.checked = this.checked;
       this.checkObj.id = obj.data.id;
-    }
+    } // 重载树
+
   }, {
     key: "reloadTreeUI",
     value: function reloadTreeUI(index, classIndex) {
@@ -47594,13 +47601,7 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
       this.showPointsTest(); // console.log(this.camera);
 
       var dir = this.camera.position.clone();
-      dir.sub(targetV); // console.log(dir.length())
-      // if(dir.length()>1){
-      //     dir.normalize();
-      //     dir.multiplyScalar(1);
-      //     // console.log(targetV.add(dir))
-      //     this.camera.position.copy(targetV.add(dir));
-      // }
+      dir.sub(targetV);
     } // 获取鼠标事件触发的目标
 
   }, {
@@ -47992,7 +47993,8 @@ var showPoint = /*#__PURE__*/function (_showPoint_base) {
     _this5.creatEvent();
 
     return _this5;
-  }
+  } // 疼痛点肌肉
+
 
   (0, _createClass2.default)(showPoint, [{
     key: "initMuscleArr",
@@ -48000,9 +48002,12 @@ var showPoint = /*#__PURE__*/function (_showPoint_base) {
       var muscleIndexArr = this.hurtObj.name.slice(15).split('*');
       this.muscleArr = [];
 
-      for (var i = 1; i < muscleIndexArr.length; i++) {
-        if (muscleIndexArr[i].match('A') || muscleIndexArr[i].match('B')) {// console.log(muscleArr[muscleIndexArr[i]])
+      for (var i = 0; i < muscleIndexArr.length; i++) {
+        if (muscleIndexArr[i].match('A') || muscleIndexArr[i].match('B')) {
+          // console.log(muscleArr[muscleIndexArr[i]])
           // console.log(muscleIndexArr[i]);
+          // 只添加其中一个
+          this.muscleArr.push(muscleArr[muscleIndexArr[i]]);
         }
 
         if (muscleArr[muscleIndexArr[i]]) {
@@ -48048,7 +48053,6 @@ var showPoint = /*#__PURE__*/function (_showPoint_base) {
     value: function onMouseOver(e) {
       (0, _get2.default)((0, _getPrototypeOf2.default)(showPoint.prototype), "onMouseOver", this).call(this, e);
       this.manager.highLightToogle.unLightAll();
-      console.log('mmmm');
     }
   }, {
     key: "onMouseOut",
@@ -48113,7 +48117,8 @@ var Skin = function Skin() {
 
 var Bone = function Bone() {
   (0, _classCallCheck2.default)(this, Bone);
-};
+}; // 肌肉类
+
 
 var Muscular = /*#__PURE__*/function () {
   function Muscular(obj) {

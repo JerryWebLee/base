@@ -140,6 +140,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
       }
     })
     this.initUI()
+    // 疼痛点图标初始化
     this.showPointArr = [];
     for (let i = 1; i < showPointArr.length; i++) {
       if (showPointArr[i]) {
@@ -153,6 +154,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
     this.boneArr = boneArr;
     this.skinArr = skinArr;
     this.muscleArr = muscleArr;
+    // console.log(this.muscleArr);
 
     this.highLightToogle = new highLightToogle(hightLightArr);
     this.hideArr = [];
@@ -166,7 +168,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
   }
 
   initMuscle(obj) {
-    // console.log(this.muscleArr);
     if (!this.muscleContainer[obj.index]) {
       this.muscleContainer[obj.index] = new Muscular(obj);
       this.muscleContainer.indexArr.push(obj.index);
@@ -177,6 +178,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
   }
 
   initUI() {
+    console.log(this.muscleArr);
     this.createFirstElement();
     this.createSecondElement();
     this.renderTreeUI(this.uiData);
@@ -188,7 +190,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
     }
     AttrListener(this.checkObj)
   }
-
+  // tree父级
   createFirstElement() {
     this.uiData = [];
     for (let i = 0; i < muscleClassNameArr.length; i++) {
@@ -203,7 +205,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
       this.uiData.push(data);
     }
   }
-
+  // tree子级
   createSecondElement() {
     let i = 0;
     this.muscleContainer.indexArr.forEach((index) => {
@@ -218,9 +220,9 @@ class MainCanvasRenderer extends CanvansRenderBase {
       this.uiData[muscle.class].children.push(data);
     })
   }
-
+  // 渲染 tree
   renderTreeUI(data) {
-    // const that = this;
+    console.log(data);
     layui.use('tree', function () {
       const tree = layui.tree;
       this.tree = tree
@@ -257,7 +259,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
   }
 
   handleElementCheck(obj) {
-    // console.log(obj);
+    console.log(obj);
     if (obj.data.type === 'secondeClass') {
       if (this.index !== obj.data.id) {
         this.index = obj.data.id
@@ -269,13 +271,13 @@ class MainCanvasRenderer extends CanvansRenderBase {
     }
     this.stateChange(obj)
   }
-  // 属性监听器
+  // 状态改变
   stateChange(obj) {
     this.skinArr.forEach((skin) => { skin.visible = !this.checked })
     this.checkObj.checked = this.checked
     this.checkObj.id = obj.data.id
   }
-
+  // 重载树
   reloadTreeUI(index, classIndex) {
     if (!this.uiTree) {
       return;
@@ -429,14 +431,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
     // console.log(this.camera);
     let dir = this.camera.position.clone();
     dir.sub(targetV);
-    // console.log(dir.length())
-    // if(dir.length()>1){
-    //     dir.normalize();
-    //     dir.multiplyScalar(1);
-    //     // console.log(targetV.add(dir))
-    //     this.camera.position.copy(targetV.add(dir));
-
-    // }
   }
   // 获取鼠标事件触发的目标
   getMouseTarget() {
@@ -804,20 +798,21 @@ class showPoint extends showPoint_base {
 
   }
 
+  // 疼痛点肌肉
   initMuscleArr(muscleArr) {
-
     let muscleIndexArr = (this.hurtObj.name.slice(15)).split('*');
     this.muscleArr = [];
 
-    for (let i = 1; i < muscleIndexArr.length; i++) {
+    for (let i = 0; i < muscleIndexArr.length; i++) {
       if (muscleIndexArr[i].match('A') || muscleIndexArr[i].match('B')) {
         // console.log(muscleArr[muscleIndexArr[i]])
         // console.log(muscleIndexArr[i]);
+        // 只添加其中一个
+        this.muscleArr.push(muscleArr[muscleIndexArr[i]])
       }
       if (muscleArr[muscleIndexArr[i]]) {
         this.muscleArr.push(muscleArr[muscleIndexArr[i]])
       }
-
     }
     this.oldMat = this.muscleArr[0].material;
     this.newMat = this.muscleArr[0].material.clone();
@@ -861,7 +856,6 @@ class showPoint extends showPoint_base {
   onMouseOver(e) {
     super.onMouseOver(e);
     this.manager.highLightToogle.unLightAll();
-    console.log('mmmm');
   }
   onMouseOut(e) {
     super.onMouseOut(e);
@@ -943,9 +937,7 @@ class Bone {
   }
 
 }
-
-
-
+// 肌肉类
 class Muscular {
   constructor(obj) {
 
