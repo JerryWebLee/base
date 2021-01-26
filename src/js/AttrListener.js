@@ -1,20 +1,23 @@
-function AttrListener(object) {
+function AttrListener(object, muscleArr, highLightToogle) {
+  console.log('监听器中的muscleArr:');
+  console.log(muscleArr);
+  let ischecked = false, mulID = '', mesh
   function descripterFun(value) {
     return {
       enumerable: true,
-      get: function () {
-        console.log('get it');
-        return value;
-      },
       set: function (newvalue) {
         if (value !== newvalue) {
-          value = newvalue;
-          console.log(value);
-          if (typeof newvalue === 'boolean') {
-            console.log(newvalue ? '显示' : '隐藏');
-          } else if (typeof newvalue === 'number') {
-            console.log('更改另一块肌肉显示');
-          }
+          // value = newvalue;
+          // console.log(value);
+          // if (typeof value === 'boolean') {
+          //   ischecked = value
+          //   console.log('操作当前肌肉' + (value ? '显示' : '隐藏'));
+          // } else if (typeof value === 'string') {
+          //   console.log('更改另一块肌肉显示');
+          //   mulID = value
+          //   mesh = muscleArr[mulID]
+          //   // highLightToogle.toogle(mesh.name)
+          // }
         }
       },
     };

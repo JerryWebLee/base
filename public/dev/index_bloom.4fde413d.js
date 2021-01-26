@@ -47028,24 +47028,28 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-function AttrListener(object) {
+function AttrListener(object, muscleArr, highLightToogle) {
+  console.log('监听器中的muscleArr:');
+  console.log(muscleArr);
+  var ischecked = false,
+      mulID = '',
+      mesh;
+
   function descripterFun(value) {
     return {
       enumerable: true,
-      get: function get() {
-        console.log('get it');
-        return value;
-      },
       set: function set(newvalue) {
-        if (value !== newvalue) {
-          value = newvalue;
-          console.log(value);
-
-          if (typeof newvalue === 'boolean') {
-            console.log(newvalue ? '显示' : '隐藏');
-          } else if (typeof newvalue === 'number') {
-            console.log('更改另一块肌肉显示');
-          }
+        if (value !== newvalue) {// value = newvalue;
+          // console.log(value);
+          // if (typeof value === 'boolean') {
+          //   ischecked = value
+          //   console.log('操作当前肌肉' + (value ? '显示' : '隐藏'));
+          // } else if (typeof value === 'string') {
+          //   console.log('更改另一块肌肉显示');
+          //   mulID = value
+          //   mesh = muscleArr[mulID]
+          //   // highLightToogle.toogle(mesh.name)
+          // }
         }
       }
     };
@@ -47114,7 +47118,6 @@ function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflec
 
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
-// console.log(hurtMuscleEffectShader);
 // 设置图层
 var ENTIRE_SCENE = 0,
     BLOOM_SCENE = 2;
@@ -47137,7 +47140,7 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
     key: "run",
     value: function () {
       var _run = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee() {
-        var body, controls;
+        var body;
         return _regenerator.default.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -47159,17 +47162,12 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
                   obj.hurtObj.visible = false;
                   obj.hurtObj.bloomObj.visible = false;
                 });
-                controls = new _OrbitControls.OrbitControls(this.camera, this.renderer.domElement);
-                controls.target.set(0, 1, 0);
-                controls.update();
-                this.controls = controls;
-                this.controls.maxDistance = 8;
-                this.controls.minDistance = 0;
+                this.cameraControls();
                 this.createMouseEvent();
                 this.animate();
                 document.getElementById('loading').className = 'loading-wrapper hide';
 
-              case 20:
+              case 15:
               case "end":
                 return _context.stop();
             }
@@ -47183,6 +47181,16 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
 
       return run;
     }()
+  }, {
+    key: "cameraControls",
+    value: function cameraControls() {
+      var controls = new _OrbitControls.OrbitControls(this.camera, this.renderer.domElement);
+      controls.target.set(0, 1, 0);
+      controls.update();
+      this.controls = controls;
+      this.controls.maxDistance = 8;
+      this.controls.minDistance = 0;
+    }
   }, {
     key: "animate",
     value: function animate() {
@@ -47202,9 +47210,6 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
       var showPointArr = [];
       var hurtPointArr = [];
       var hightLightArr = [];
-      var allObjArr_byName = [];
-      var allObjArr = [];
-      var i = 0;
       this.muscleContainer = [];
       this.muscleContainer.indexArr = []; // 遍历组中的对象属性
 
@@ -47249,40 +47254,41 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
           }
 
           obj.cName = cName;
-          obj.index = obj.name.slice(0, obj.name.length - obj.cName.length - 1); // console.log(i++, obj);
+          obj.index = obj.name.slice(0, obj.name.length - obj.cName.length - 1);
 
           _this.initMuscle(obj);
 
           obj.material = new THREE.MeshBasicMaterial({
             map: obj.material.map,
             transparent: true,
-            // opacity: 0.5
-            opacity: 1
+            opacity: 0.5 // opacity: 1
+
           });
           hightLightArr.push(obj);
           muscleArr[obj.index] = obj;
-          if (obj.index.match('B')) obj.visible = false;
+          if (obj.index.match('B')) obj.visible = true;
           return;
         }
       });
+      this.boxArr = boxArr;
+      this.boneArr = boneArr;
+      this.skinArr = skinArr;
+      this.muscleArr = muscleArr;
+      this.highLightToogle = new highLightToogle(hightLightArr); // console.log('肌肉信息:');
+      // console.log(this.muscleArr);
+
       this.initUI(); // 疼痛点图标初始化
 
       this.showPointArr = [];
 
-      for (var _i = 1; _i < showPointArr.length; _i++) {
-        if (showPointArr[_i]) {
-          var point = new showPoint(showPointArr[_i], hurtPointArr[_i], this, this.canvas, this.camera);
+      for (var i = 1; i < showPointArr.length; i++) {
+        if (showPointArr[i]) {
+          var point = new showPoint(showPointArr[i], hurtPointArr[i], this, this.canvas, this.camera);
           this.showPointArr.push(point);
           point.initMuscleArr(muscleArr);
         }
       }
 
-      this.boxArr = boxArr;
-      this.boneArr = boneArr;
-      this.skinArr = skinArr;
-      this.muscleArr = muscleArr; // console.log(this.muscleArr);
-
-      this.highLightToogle = new highLightToogle(hightLightArr);
       this.hideArr = [];
       var cancelButton = document.getElementById('cancelButton');
       var restartButton = document.getElementById('restartButton');
@@ -47307,15 +47313,17 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
     value: function initUI() {
       this.createFirstElement();
       this.createSecondElement();
-      this.renderTreeUI(this.uiData);
+      this.renderTreeUI(this.uiData); // console.log(this.uiData);
+
       this.checked = false;
-      var id = -1;
       this.checkObj = {
         checked: this.checked,
-        id: id
+        mulID: ''
       }; // 属性监听器
 
-      (0, _AttrListener.default)(this.checkObj);
+      this.cameraControls();
+      console.log(this.controls);
+      (0, _AttrListener.default)(this.checkObj, this.muscleArr, this.highLightToogle);
     } // tree父级
 
   }, {
@@ -47329,7 +47337,6 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
           type: 'firstClass',
           spread: false,
           id: muscleClassNameArr[i],
-          // disabled: true,
           children: []
         };
         this.uiData.push(data);
@@ -47348,7 +47355,8 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
           title: muscle.obj.cName,
           type: 'secondeClass',
           id: i,
-          class: muscle.class
+          class: muscle.class,
+          mulID: muscle.id
         };
         i++;
 
@@ -47409,22 +47417,25 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
           this.reloadTreeUI(obj.data.id, obj.data.class);
         }
 
-        this.checked = obj.checked; // console.log(this.checked);
+        this.checked = obj.checked;
       }
 
       this.stateChange(obj);
-    } // 状态改变
+    } // 状态改变,出发属性监听回调
 
   }, {
     key: "stateChange",
     value: function stateChange(obj) {
       var _this3 = this;
 
+      var mesh = this.muscleArr[obj.data.mulID];
+      this.moveCamera2Target(mesh);
       this.skinArr.forEach(function (skin) {
         skin.visible = !_this3.checked;
       });
       this.checkObj.checked = this.checked;
-      this.checkObj.id = obj.data.id;
+      this.checkObj.mulID = obj.data.mulID;
+      this.highLightToogle.toogle(mesh.name);
     } // 重载树
 
   }, {
@@ -47471,17 +47482,16 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
         this.dragChange = true;
         this.didDrag = true;
         this.showPoints_HideAll();
-      } // 材质的高亮显示
-      else {
-          var obj = this.getMouseTarget();
-          console.log(obj);
-
-          if (obj) {
-            // console.log(obj);
-            this.highLightToogle.toogle(obj.name, this.mouseState);
-          } else {
-            this.highLightToogle.unLightAll();
-          }
+      } // 肌肉的高亮显示
+      else {// let obj = this.getMouseTarget();
+          // if (obj) {
+          //   console.log('肌肉高亮:');
+          //   console.log(obj);
+          //   this.highLightToogle.toogle(obj.name, this.mouseState);
+          // }
+          // else {
+          //   this.highLightToogle.unLightAll();
+          // }
         }
     } // 鼠标按下事件,开始拖拽
 
@@ -47522,6 +47532,31 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
 
         if (obj) {
           this.moveCamera2Target(obj);
+          this.highLightToogle.toogle(obj.name);
+          var mulID = obj.name.split('_');
+          var firstClass = +mulID[0];
+          firstClass -= 1;
+          mulID.pop();
+          mulID = mulID.join('_');
+          console.log(mulID);
+
+          if (this.mulID !== mulID) {
+            this.mulID = mulID;
+            var dataArr = this.uiData[firstClass].children;
+            var newObj = null;
+            dataArr.forEach(function (item) {
+              if (item.mulID === mulID) {
+                newObj = item;
+                console.log(item);
+              }
+            });
+            this.reloadTreeUI(newObj.id, newObj.class);
+          } else {
+            console.log('取消高亮');
+            this.highLightToogle.unLightAll();
+            this.renderTreeUI(this.uiData);
+            this.mulID = -1;
+          }
         }
       }.bind(this), 300);
     } // 双击皮肤和肌肉的隐藏
@@ -47537,10 +47572,10 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
           // console.log(obj);
           // console.log(this.skinArr);
           obj.visible = false;
-        } // obj.material.opacity = 0.5
+        }
 
+        obj.material.opacity = 0.7; // obj.material.opacity = 1
 
-        obj.material.opacity = 1;
         obj.material.transparent = true;
         obj.visible = false;
         this.showPointsTest();
@@ -47595,7 +47630,6 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
   }, {
     key: "moveCamera2Target",
     value: function moveCamera2Target(obj) {
-      // console.log(this.camera);
       var targetV = obj.localToWorld(new THREE.Vector3());
       this.controls.target = targetV;
       this.controls.update();
@@ -47612,7 +47646,7 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
       var obj = this.rayTest(this.mouseState, this.skinArr);
 
       if (obj) {
-        // this.highLightToogle.toogle(obj.name);
+        // console.log("getMouseTarget:");
         // console.log(obj);
         return obj;
       } else {
@@ -47775,7 +47809,7 @@ var highLightToogle = /*#__PURE__*/function () {
       } else {
         if (!highLightMatArr[arr[i].material.name]) {
           highLightMat = arr[i].material.clone();
-          highLightMat.color = new THREE.Color(0xff5555);
+          highLightMat.color = new THREE.Color(0xff0000);
           highLightMatArr[arr[i].material.name] = highLightMat;
         }
 
@@ -47790,7 +47824,8 @@ var highLightToogle = /*#__PURE__*/function () {
     this.elementArr = elementArr;
     this.txtarea = document.getElementById('txtarea');
     this.cNameTxt = document.getElementById('name');
-  }
+  } // 鼠标状态默认为空
+
 
   (0, _createClass2.default)(highLightToogle, [{
     key: "toogle",
@@ -48040,9 +48075,8 @@ var showPoint = /*#__PURE__*/function (_showPoint_base) {
           USE_COLOR: true
         }
       });
-      this.newMat.transparent = true; // this.newMat.opacity = 0.5;
-
-      this.newMat.opacity = 1;
+      this.newMat.transparent = true;
+      this.newMat.opacity = 0.7; // this.newMat.opacity = 1;
     }
   }, {
     key: "creatEvent",
