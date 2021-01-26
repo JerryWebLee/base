@@ -242,19 +242,17 @@ class MainCanvasRenderer extends CanvansRenderBase {
     let classIndex = obj.data.class
     if (obj.data.type === 'secondeClass') {
       if (this.index !== obj.data.id || !this.checked) {
-        this.flag = obj.data.id
-        this.reloadTreeUI(this.flag, classIndex);
+        this.index = obj.data.id
+        this.reloadTreeUI(this.index, classIndex);
         // this.uiTree.setChecked('mainTree', this.flag);
         this.checked = true
       }
       else {
         this.checked = false
-        this.flag = -1
-        this.reloadTreeUI(this.flag, classIndex);
+        this.index = -1
+        this.reloadTreeUI(this.index, classIndex);
       }
-      this.skinArr.forEach((skin) => { skin.visible = !this.checked })
-      this.checkObj.checked = this.checked
-      this.checkObj.id = obj.data.id
+      this.attrListenerFn(obj)
     }
   }
 
@@ -269,6 +267,10 @@ class MainCanvasRenderer extends CanvansRenderBase {
       // 属性监听器
       // console.log(this.checked);
     }
+    this.attrListenerFn(obj)
+  }
+
+  attrListenerFn(obj) {
     this.skinArr.forEach((skin) => { skin.visible = !this.checked })
     this.checkObj.checked = this.checked
     this.checkObj.id = obj.data.id
