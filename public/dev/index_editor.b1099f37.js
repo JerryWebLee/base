@@ -50205,7 +50205,8 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
 
         if (obj) {
           this.moveCamera2Target(obj);
-          console.log(obj.name); // obj.visible = false
+          console.log('点击事件');
+          console.log('objname' + obj.name); // obj.visible = false
           // obj.material.transparent = true;
           // obj.material.opacity = 0.5;
 
@@ -50235,7 +50236,12 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
         if (obj) {
           // console.log(obj.children[0].children);
           obj = this.rayTest(this.mouseState, obj.children[0].children);
-          if (obj) return obj;
+
+          if (obj) {
+            console.log('getmouseTarget' + obj);
+            console.log(obj);
+            return obj;
+          }
         }
       }
     }

@@ -252,7 +252,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
         this.index = -1
         this.reloadTreeUI(this.index, classIndex);
       }
-      this.attrListenerFn(obj)
+      this.stateChange(obj)
     }
   }
 
@@ -267,10 +267,10 @@ class MainCanvasRenderer extends CanvansRenderBase {
 
       // console.log(this.checked);
     }
-    this.attrListenerFn(obj)
+    this.stateChange(obj)
   }
   // 属性监听器
-  attrListenerFn(obj) {
+  stateChange(obj) {
     this.skinArr.forEach((skin) => { skin.visible = !this.checked })
     this.checkObj.checked = this.checked
     this.checkObj.id = obj.data.id

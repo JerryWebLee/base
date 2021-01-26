@@ -232,7 +232,8 @@ class MainCanvasRenderer extends CanvansRenderBase {
       let obj = this.getMouseTarget();
       if (obj) {
         this.moveCamera2Target(obj);
-        console.log(obj.name);
+        console.log('点击事件');
+        console.log('objname' + obj.name);
         // obj.visible = false
         // obj.material.transparent = true;
         // obj.material.opacity = 0.5;
@@ -257,6 +258,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
   getMouseTarget() {
 
     let obj = this.rayTest(this.mouseState, this.skinArr);
+
     if (obj) {
       // this.highLightToogle.toogle(obj.name);
 
@@ -267,8 +269,12 @@ class MainCanvasRenderer extends CanvansRenderBase {
       if (obj) {
         // console.log(obj.children[0].children);
         obj = this.rayTest(this.mouseState, obj.children[0].children);
-        if (obj)
+        if (obj) {
+          console.log('getmouseTarget' + obj);
+          console.log(obj);
           return obj;
+        }
+
       }
     }
   }

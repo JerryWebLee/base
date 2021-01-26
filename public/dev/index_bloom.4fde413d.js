@@ -47388,7 +47388,7 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
           this.reloadTreeUI(this.index, classIndex);
         }
 
-        this.attrListenerFn(obj);
+        this.stateChange(obj);
       }
     }
   }, {
@@ -47404,12 +47404,12 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
         this.checked = obj.checked; // console.log(this.checked);
       }
 
-      this.attrListenerFn(obj);
+      this.stateChange(obj);
     } // 属性监听器
 
   }, {
-    key: "attrListenerFn",
-    value: function attrListenerFn(obj) {
+    key: "stateChange",
+    value: function stateChange(obj) {
       var _this3 = this;
 
       this.skinArr.forEach(function (skin) {
