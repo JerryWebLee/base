@@ -47401,12 +47401,12 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
           this.reloadTreeUI(obj.data.id, obj.data.class);
         }
 
-        this.checked = obj.checked; // 属性监听器
-        // console.log(this.checked);
+        this.checked = obj.checked; // console.log(this.checked);
       }
 
       this.attrListenerFn(obj);
-    }
+    } // 属性监听器
+
   }, {
     key: "attrListenerFn",
     value: function attrListenerFn(obj) {

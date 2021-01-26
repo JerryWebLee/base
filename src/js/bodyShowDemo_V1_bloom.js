@@ -264,12 +264,12 @@ class MainCanvasRenderer extends CanvansRenderBase {
         this.reloadTreeUI(obj.data.id, obj.data.class);
       }
       this.checked = obj.checked
-      // 属性监听器
+
       // console.log(this.checked);
     }
     this.attrListenerFn(obj)
   }
-
+  // 属性监听器
   attrListenerFn(obj) {
     this.skinArr.forEach((skin) => { skin.visible = !this.checked })
     this.checkObj.checked = this.checked
