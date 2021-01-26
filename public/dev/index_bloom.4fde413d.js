@@ -47305,7 +47305,6 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
   }, {
     key: "initUI",
     value: function initUI() {
-      console.log(this.muscleArr);
       this.createFirstElement();
       this.createSecondElement();
       this.renderTreeUI(this.uiData);
@@ -47314,7 +47313,8 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
       this.checkObj = {
         checked: this.checked,
         id: id
-      };
+      }; // 属性监听器
+
       (0, _AttrListener.default)(this.checkObj);
     } // tree父级
 
@@ -47375,7 +47375,8 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
         });
         this.uiTree = tree;
       }.bind(this));
-    }
+    } // 列表点击事件
+
   }, {
     key: "handleElementClick",
     value: function handleElementClick(obj) {
@@ -47395,7 +47396,8 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
 
         this.stateChange(obj);
       }
-    }
+    } // 列表选择事件
+
   }, {
     key: "handleElementCheck",
     value: function handleElementCheck(obj) {
@@ -47622,7 +47624,8 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
           if (obj) return obj;
         }
       }
-    }
+    } // 隐藏图标点
+
   }, {
     key: "showPoints_HideAll",
     value: function showPoints_HideAll() {
@@ -47706,7 +47709,8 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
       finalComposer.addPass(finalPass);
       this.bloomComposer = bloomComposer;
       this.finalComposer = finalComposer;
-    }
+    } // 创建疼痛点
+
   }, {
     key: "createHurtPoint",
     value: function createHurtPoint(obj) {

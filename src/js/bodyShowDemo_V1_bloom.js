@@ -178,7 +178,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
   }
 
   initUI() {
-    console.log(this.muscleArr);
     this.createFirstElement();
     this.createSecondElement();
     this.renderTreeUI(this.uiData);
@@ -188,6 +187,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
       checked: this.checked,
       id
     }
+    // 属性监听器
     AttrListener(this.checkObj)
   }
   // tree父级
@@ -239,7 +239,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
       this.uiTree = tree;
     }.bind(this))
   }
-
+  // 列表点击事件
   handleElementClick(obj) {
     let classIndex = obj.data.class
     if (obj.data.type === 'secondeClass') {
@@ -257,7 +257,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
       this.stateChange(obj)
     }
   }
-
+  // 列表选择事件
   handleElementCheck(obj) {
     console.log(obj);
     if (obj.data.type === 'secondeClass') {
@@ -450,7 +450,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
       }
     }
   }
-
+  // 隐藏图标点
   showPoints_HideAll() {
     this.showPointArr.forEach((point) => {
       point.hide();
@@ -529,7 +529,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
     this.bloomComposer = bloomComposer;
     this.finalComposer = finalComposer;
   }
-
+  // 创建疼痛点
   createHurtPoint(obj) {
     let oMat = obj.material;
     obj.material = new THREE.MeshBasicMaterial();
