@@ -30,19 +30,40 @@
       <image src="../resource/cancel.png" class="button" id="cancelButton" hidden="">
 
       <div id="txtarea" class="txtarea" hidden="">
-        <div id="muscleName">
-          <span id="name">肌肉名称:</span>
-          <span id="nameTxt"></span>
+        <div id="muscle">
+          <div id="muscleName">
+            <span id="name">肌肉名称:</span>
+            <span id="nameTxt"></span>
+          </div>
+          <div id="bodyClass">
+            <span id="bodyClassName">所属身体部分:</span>
+            <span id="bodyClassNameTxt"></span>
+          </div>
+          <!-- 有疼痛点的肌肉显示疼痛点按钮 -->
+          <div id="hurtPoint">
+            <button id="showHurtPoint">显示疼痛点</button>
+            <button id="showHurtPoint">隐藏疼痛点</button>
+          </div>
         </div>
-        <div id="bodyClass">
-          <span id="bodyClassName">所属分类:</span>
-          <span id=""></span>
+        <div id="hurttxtarea" class="txtarea" hidden="">
+          <div id="hurtPointList">
+            <ul>
+              <li>疼痛</li>
+            </ul>
+          </div>
+          <div>
+            <div id="reason">成因</div>
+            <span></span>
+          </div>
+          <div>
+            <div id="solution">手法</div>
+            <span></span>
+          </div>
+          <div id="status">
+            <button id="healthStatus">正常状态</button>
+            <button id="painStatus">疼痛状态</button>
+          </div>
         </div>
-      </div>
-
-      <div id="hurttxtarea" class="txtarea" hidden="">
-        <p id="reason">成因</p>
-        <p id="solution">手法</p>
       </div>
 
       <div id="tipbox">
