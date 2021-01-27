@@ -18,7 +18,7 @@ import { hurtMuscleEffectShader } from './shader'
 const ENTIRE_SCENE = 0, BLOOM_SCENE = 2;
 const bloomLayer = new THREE.Layers();
 bloomLayer.set(BLOOM_SCENE);
-const muscleClassNameArr = ['头颈部', '肩颈部', '手臂部', '胸腹部', '腰背部', '腿脚部'];
+const muscleClassNameArr = ['头颈部', '肩颈部', '手臂部', '胸腹部', '腰背部', '腿脚部', "其他"];
 // canvas渲染
 class MainCanvasRenderer extends CanvansRenderBase {
   constructor(canvas) {
@@ -27,7 +27,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
   // 模型加载渲染引擎
   async run() {
 
-    let body = await this.loadFBX('../resource/models/ALL5.FBX');
+    let body = await this.loadFBX('../resource/models/ALL4.FBX');
     this.scene.add(body);
     this.camera.far = 1000;
 
@@ -77,6 +77,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
 
     // 遍历组中的对象属性
     this.body.traverse((obj) => {
+      // console.log(obj);
       if (obj.name == 'ache_area') {
         obj.visible = false;
       }
@@ -118,7 +119,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
 
         obj.cName = cName;
         obj.index = obj.name.slice(0, obj.name.length - obj.cName.length - 1)
-
+        // console.log(obj);
         this.initMuscle(obj)
         obj.material = new THREE.MeshBasicMaterial({
           map: obj.material.map,
@@ -154,10 +155,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
         point.initMuscleArr(muscleArr);
       }
     }
-
-
     this.hideArr = [];
-
     let cancelButton = document.getElementById('cancelButton');
     let restartButton = document.getElementById('restartButton');
 
@@ -167,6 +165,8 @@ class MainCanvasRenderer extends CanvansRenderBase {
   }
 
   initMuscle(obj) {
+    // console.log('initMuscle');
+    // console.log(obj.index);
     if (!this.muscleContainer[obj.index]) {
       this.muscleContainer[obj.index] = new Muscular(obj);
       this.muscleContainer.indexArr.push(obj.index);
@@ -968,8 +968,11 @@ class Muscular {
   constructor(obj) {
 
     this.obj = obj;
+    // console.log(obj);
     this.id = obj.index;
+    // console.log(this.id);
     this.class = parseInt(this.id.split("_")[0]) - 1;
+    // console.log('this.class:' + this.class);
     this.className = muscleClassNameArr[this.className];
     this.index = parseInt(this.id.split("_")[1]);
 

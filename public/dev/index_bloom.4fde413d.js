@@ -47079,7 +47079,7 @@ var ENTIRE_SCENE = 0,
     BLOOM_SCENE = 2;
 var bloomLayer = new THREE.Layers();
 bloomLayer.set(BLOOM_SCENE);
-var muscleClassNameArr = ['头颈部', '肩颈部', '手臂部', '胸腹部', '腰背部', '腿脚部']; // canvas渲染
+var muscleClassNameArr = ['头颈部', '肩颈部', '手臂部', '胸腹部', '腰背部', '腿脚部', "其他"]; // canvas渲染
 
 var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
   (0, _inherits2.default)(MainCanvasRenderer, _CanvansRenderBase);
@@ -47102,7 +47102,7 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
             switch (_context.prev = _context.next) {
               case 0:
                 _context.next = 2;
-                return this.loadFBX('../resource/models/ALL5.FBX');
+                return this.loadFBX('../resource/models/ALL4.FBX');
 
               case 2:
                 body = _context.sent;
@@ -47170,6 +47170,7 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
       this.muscleContainer.indexArr = []; // 遍历组中的对象属性
 
       this.body.traverse(function (obj) {
+        // console.log(obj);
         if (obj.name == 'ache_area') {
           obj.visible = false;
         }
@@ -47210,7 +47211,7 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
           }
 
           obj.cName = cName;
-          obj.index = obj.name.slice(0, obj.name.length - obj.cName.length - 1);
+          obj.index = obj.name.slice(0, obj.name.length - obj.cName.length - 1); // console.log(obj);
 
           _this.initMuscle(obj);
 
@@ -47255,6 +47256,8 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
   }, {
     key: "initMuscle",
     value: function initMuscle(obj) {
+      // console.log('initMuscle');
+      // console.log(obj.index);
       if (!this.muscleContainer[obj.index]) {
         this.muscleContainer[obj.index] = new Muscular(obj);
         this.muscleContainer.indexArr.push(obj.index);
@@ -48122,9 +48125,12 @@ var Bone = function Bone() {
 var Muscular = /*#__PURE__*/function () {
   function Muscular(obj) {
     (0, _classCallCheck2.default)(this, Muscular);
-    this.obj = obj;
-    this.id = obj.index;
-    this.class = parseInt(this.id.split("_")[0]) - 1;
+    this.obj = obj; // console.log(obj);
+
+    this.id = obj.index; // console.log(this.id);
+
+    this.class = parseInt(this.id.split("_")[0]) - 1; // console.log('this.class:' + this.class);
+
     this.className = muscleClassNameArr[this.className];
     this.index = parseInt(this.id.split("_")[1]);
 
