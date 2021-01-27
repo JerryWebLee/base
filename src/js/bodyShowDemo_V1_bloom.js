@@ -124,7 +124,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
         obj.material = new THREE.MeshBasicMaterial({
           map: obj.material.map,
           transparent: true,
-          opacity: 0.5
+          opacity: 0.7
           // opacity: 1
         })
 
@@ -254,7 +254,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
   }
   // 列表选择事件
   handleElementCheck(obj) {
-    console.log(obj);
     if (obj.data.type === 'secondeClass') {
       if (this.index !== obj.data.id) {
         this.index = obj.data.id
@@ -264,8 +263,9 @@ class MainCanvasRenderer extends CanvansRenderBase {
     }
     this.stateChange(obj)
   }
-  // 状态改变,出发属性监听回调
+  // 状态改变
   stateChange(obj) {
+    console.log(obj);
     const muscle = this.muscleArr[obj.data.mulID]
     this.moveCamera2Target(muscle)
     this.skinArr.forEach((skin) => { skin.visible = !this.checked })
@@ -277,7 +277,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
       this.highLightToogle.unLightAll()
     }
   }
-  // 重载树
+  // 重载layui树
   reloadTreeUI(index, classIndex) {
     if (!this.uiTree) {
       return;
@@ -347,15 +347,16 @@ class MainCanvasRenderer extends CanvansRenderBase {
     // console.log('my whell handle')
     this.showPointsTest();
   }
-  // 单击移动camera2镜头
+
   onMouseClick(e) {
+    // 单击移动camera2镜头
     if (this.didDrag)
       return;
     clearInterval(this.clickTimer);
+    // 点击肌肉高亮显示
     this.clickTimer = setTimeout(function () {
       let obj = this.getMouseTarget();
       if (obj) {
-
         this.moveCamera2Target(obj);
         this.highLightToogle.toogle(obj.name)
 
@@ -378,7 +379,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
           })
           this.reloadTreeUI(newObj.id, newObj.class)
         } else {
-          console.log('取消高亮');
+          // 取消高亮
           // this.uiData[classIndex].spread = false;
           this.highLightToogle.unLightAll();
           this.renderTreeUI(this.uiData)
@@ -409,7 +410,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
   }
   // 图标点的显示隐藏
   showPointsTest() {
-
+    console.log(this.showPointArr);
     this.showPointArr.forEach((point) => {
 
       if (this.showPointVisibleTest(point.obj)) {

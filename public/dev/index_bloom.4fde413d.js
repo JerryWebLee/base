@@ -47218,7 +47218,7 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
           obj.material = new THREE.MeshBasicMaterial({
             map: obj.material.map,
             transparent: true,
-            opacity: 0.5 // opacity: 1
+            opacity: 0.7 // opacity: 1
 
           });
           hightLightArr.push(obj);
@@ -47362,8 +47362,6 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
   }, {
     key: "handleElementCheck",
     value: function handleElementCheck(obj) {
-      console.log(obj);
-
       if (obj.data.type === 'secondeClass') {
         if (this.index !== obj.data.id) {
           this.index = obj.data.id;
@@ -47374,13 +47372,14 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
       }
 
       this.stateChange(obj);
-    } // 状态改变,出发属性监听回调
+    } // 状态改变
 
   }, {
     key: "stateChange",
     value: function stateChange(obj) {
       var _this3 = this;
 
+      console.log(obj);
       var muscle = this.muscleArr[obj.data.mulID];
       this.moveCamera2Target(muscle);
       this.skinArr.forEach(function (skin) {
@@ -47394,7 +47393,7 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
       } else {
         this.highLightToogle.unLightAll();
       }
-    } // 重载树
+    } // 重载layui树
 
   }, {
     key: "reloadTreeUI",
@@ -47480,13 +47479,14 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
     value: function onMouseWheel(e) {
       // console.log('my whell handle')
       this.showPointsTest();
-    } // 单击移动camera2镜头
-
+    }
   }, {
     key: "onMouseClick",
     value: function onMouseClick(e) {
+      // 单击移动camera2镜头
       if (this.didDrag) return;
-      clearInterval(this.clickTimer);
+      clearInterval(this.clickTimer); // 点击肌肉高亮显示
+
       this.clickTimer = setTimeout(function () {
         var obj = this.getMouseTarget();
 
@@ -47515,8 +47515,8 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
             });
             this.reloadTreeUI(newObj.id, newObj.class);
           } else {
-            console.log('取消高亮'); // this.uiData[classIndex].spread = false;
-
+            // 取消高亮
+            // this.uiData[classIndex].spread = false;
             this.highLightToogle.unLightAll();
             this.renderTreeUI(this.uiData);
             this.mulID = -1;
@@ -47552,6 +47552,7 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
     value: function showPointsTest() {
       var _this4 = this;
 
+      console.log(this.showPointArr);
       this.showPointArr.forEach(function (point) {
         if (_this4.showPointVisibleTest(point.obj)) {
           // console.log(1111)
