@@ -45673,17 +45673,14 @@ var CanvansRenderBase = /*#__PURE__*/function () {
       this.renderer = renderer; // 处理高清屏
 
       if (this.deviceType == 'phone') this.renderer.setPixelRatio(window.devicePixelRatio * 4);else this.renderer.setPixelRatio(window.devicePixelRatio * 4 * 2); // 响应式设计
-
-      window.onresize = this.onWindowResize.bind(this);
+      // window.onresize = this.onWindowResize.bind(this);
     } // 响应式设计
-
-  }, {
-    key: "onWindowResize",
-    value: function onWindowResize() {
-      // console.log(this.canvas.offsetWidth, this.canvas.offsetHeight);
-      this.camera.aspect = this.canvas.offsetWidth / this.canvas.offsetHeight;
-      this.camera.updateProjectionMatrix();
-    } // 获取设备类型
+    // onWindowResize() {
+    // console.log(this.canvas.offsetWidth, this.canvas.offsetHeight);
+    //   this.camera.aspect = this.canvas.offsetWidth / this.canvas.offsetHeight;
+    //   this.camera.updateProjectionMatrix();
+    // }
+    // 获取设备类型
 
   }, {
     key: "getdeviceType",
@@ -47079,7 +47076,7 @@ var ENTIRE_SCENE = 0,
     BLOOM_SCENE = 2;
 var bloomLayer = new THREE.Layers();
 bloomLayer.set(BLOOM_SCENE);
-var muscleClassNameArr = ['头颈部', '肩颈部', '手臂部', '胸腹部', '腰背部', '腿脚部', "其他"]; // canvas渲染
+var muscleClassNameArr = ['头颈部', '肩颈部', '手臂部', '胸腹部', '腰背部', '腿脚部']; // canvas渲染
 
 var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
   (0, _inherits2.default)(MainCanvasRenderer, _CanvansRenderBase);
@@ -47102,7 +47099,7 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
             switch (_context.prev = _context.next) {
               case 0:
                 _context.next = 2;
-                return this.loadFBX('../resource/models/ALL4.FBX');
+                return this.loadFBX('../resource/models/ALL4_2.FBX');
 
               case 2:
                 body = _context.sent;
@@ -47112,18 +47109,27 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
                 this.body = body;
                 this.createBloom();
                 this.bodyEffect();
-                this.render();
+                this.render(); // 是否展示全部疼痛点
+
+                this.isShowAllHurtPoint = false;
                 this.showPointArr.forEach(function (obj) {
                   obj.hurtObj.bloomObj.layers.toggle(BLOOM_SCENE);
                   obj.hurtObj.visible = false;
                   obj.hurtObj.bloomObj.visible = false;
-                });
+                }); // 响应式设计
+
+                window.onresize = function () {
+                  this.showPointsTest();
+                  this.camera.aspect = this.canvas.offsetWidth / this.canvas.offsetHeight;
+                  this.camera.updateProjectionMatrix();
+                }.bind(this);
+
                 this.cameraControls();
                 this.createMouseEvent();
                 this.animate();
                 document.getElementById('loading').className = 'loading-wrapper hide';
 
-              case 15:
+              case 17:
               case "end":
                 return _context.stop();
             }
@@ -47248,8 +47254,8 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
 
       this.hideArr = [];
       var cancelButton = document.getElementById('cancelButton');
-      var restartButton = document.getElementById('restartButton');
-      this.showPoints_HideAll();
+      var restartButton = document.getElementById('restartButton'); // this.showPoints_HideAll();
+
       cancelButton.addEventListener('click', this.cancelClick.bind(this));
       restartButton.addEventListener('click', this.restartClick.bind(this));
     }

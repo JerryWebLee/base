@@ -51,14 +51,14 @@ class CanvansRenderBase {
     else
       this.renderer.setPixelRatio(window.devicePixelRatio * 4 * 2);
     // 响应式设计
-    window.onresize = this.onWindowResize.bind(this);
+    // window.onresize = this.onWindowResize.bind(this);
   }
   // 响应式设计
-  onWindowResize() {
-    // console.log(this.canvas.offsetWidth, this.canvas.offsetHeight);
-    this.camera.aspect = this.canvas.offsetWidth / this.canvas.offsetHeight;
-    this.camera.updateProjectionMatrix();
-  }
+  // onWindowResize() {
+  // console.log(this.canvas.offsetWidth, this.canvas.offsetHeight);
+  //   this.camera.aspect = this.canvas.offsetWidth / this.canvas.offsetHeight;
+  //   this.camera.updateProjectionMatrix();
+  // }
   // 获取设备类型
   getdeviceType() {
     if (getdeviceType()) {

@@ -18,7 +18,7 @@ import { hurtMuscleEffectShader } from './shader'
 const ENTIRE_SCENE = 0, BLOOM_SCENE = 2;
 const bloomLayer = new THREE.Layers();
 bloomLayer.set(BLOOM_SCENE);
-const muscleClassNameArr = ['头颈部', '肩颈部', '手臂部', '胸腹部', '腰背部', '腿脚部', "其他"];
+const muscleClassNameArr = ['头颈部', '肩颈部', '手臂部', '胸腹部', '腰背部', '腿脚部'];
 // canvas渲染
 class MainCanvasRenderer extends CanvansRenderBase {
   constructor(canvas) {
@@ -27,7 +27,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
   // 模型加载渲染引擎
   async run() {
 
-    let body = await this.loadFBX('../resource/models/ALL4.FBX');
+    let body = await this.loadFBX('../resource/models/ALL4_2.FBX');
     this.scene.add(body);
     this.camera.far = 1000;
 
@@ -36,12 +36,20 @@ class MainCanvasRenderer extends CanvansRenderBase {
     this.createBloom();
     this.bodyEffect();
     this.render();
+    // 是否展示全部疼痛点
+    this.isShowAllHurtPoint = false
 
     this.showPointArr.forEach((obj) => {
       obj.hurtObj.bloomObj.layers.toggle(BLOOM_SCENE);
       obj.hurtObj.visible = false;
       obj.hurtObj.bloomObj.visible = false;
     })
+    // 响应式设计
+    window.onresize = function () {
+      this.showPointsTest()
+      this.camera.aspect = this.canvas.offsetWidth / this.canvas.offsetHeight;
+      this.camera.updateProjectionMatrix();
+    }.bind(this)
 
     this.cameraControls()
     this.createMouseEvent();
@@ -159,7 +167,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
     let cancelButton = document.getElementById('cancelButton');
     let restartButton = document.getElementById('restartButton');
 
-    this.showPoints_HideAll();
+    // this.showPoints_HideAll();
     cancelButton.addEventListener('click', this.cancelClick.bind(this));
     restartButton.addEventListener('click', this.restartClick.bind(this));
   }
@@ -303,6 +311,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
     envetTarget.addEventListener('mouseup', this.onMouseUP.bind(this));
     envetTarget.addEventListener('wheel', this.onMouseWheel.bind(this));
   }
+
   // 鼠标移动时,皮肤和肌肉高亮显示
   onMouseMove(e) {
     this.mouseState = e;

@@ -45673,17 +45673,14 @@ var CanvansRenderBase = /*#__PURE__*/function () {
       this.renderer = renderer; // 处理高清屏
 
       if (this.deviceType == 'phone') this.renderer.setPixelRatio(window.devicePixelRatio * 4);else this.renderer.setPixelRatio(window.devicePixelRatio * 4 * 2); // 响应式设计
-
-      window.onresize = this.onWindowResize.bind(this);
+      // window.onresize = this.onWindowResize.bind(this);
     } // 响应式设计
-
-  }, {
-    key: "onWindowResize",
-    value: function onWindowResize() {
-      // console.log(this.canvas.offsetWidth, this.canvas.offsetHeight);
-      this.camera.aspect = this.canvas.offsetWidth / this.canvas.offsetHeight;
-      this.camera.updateProjectionMatrix();
-    } // 获取设备类型
+    // onWindowResize() {
+    // console.log(this.canvas.offsetWidth, this.canvas.offsetHeight);
+    //   this.camera.aspect = this.canvas.offsetWidth / this.canvas.offsetHeight;
+    //   this.camera.updateProjectionMatrix();
+    // }
+    // 获取设备类型
 
   }, {
     key: "getdeviceType",

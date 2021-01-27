@@ -22,39 +22,45 @@
     <div id="canvasGroup" class="myCavnas">
       <image src="../resource/restart.png" class="button" id="restartButton" hidden="">
         <image src="../resource/cancel.png" class="button" id="cancelButton" hidden="">
-          <div id="txtarea" class="txtarea" hidden="">
-            <div id="muscle">
+          <div id="txtarea" class="txtarea el-card is-always-shadow" hidden="">
+            <div class="el-card__header">
               <div id="muscleName">
-                <span id="name">肌肉名称:</span>
-                <span id="nameTxt"></span>
-              </div>
-              <div id="bodyClass">
-                <span id="bodyClassName">所属身体部分:</span>
-                <span id="bodyClassNameTxt"></span>
-              </div>
-              <!-- 有疼痛点的肌肉显示疼痛点按钮 -->
-              <div id="hurtPoint">
-                <button id="showHurtPoint">显示疼痛点</button>
-                <button id="showHurtPoint">隐藏疼痛点</button>
+                <span id="name">当前肌肉名称:</span>
+                <span id="nameTxt">胸大肌</span>
               </div>
             </div>
-            <div id="hurttxtarea" class="txtarea" hidden="">
-              <div id="hurtPointList">
-                <ul>
-                  <li>疼痛</li>
-                </ul>
-              </div>
-              <div>
-                <div id="reason">成因</div>
-                <span></span>
-              </div>
-              <div>
-                <div id="solution">手法</div>
-                <span></span>
-              </div>
-              <div id="status">
-                <button id="healthStatus">正常状态</button>
-                <button id="painStatus">疼痛状态</button>
+            <div class="el-card__body">
+              <div id="muscle">
+                <div id="bodyClass">
+                  <span id="bodyClassName">所属身体部分:</span>
+                  <span id="bodyClassNameTxt">头颈部</span>
+                </div>
+                <!-- 有疼痛点的肌肉显示疼痛点按钮 -->
+                <div id="hurtPoint">
+                  <button id="showHurtPoint" class="btn">显示/隐藏当前肌肉疼痛点</button>
+                </div>
+                <div id="showAllHurtPoint">
+                  <button id="isShowAllHurtPointBtn" class="btn">显示/隐藏所有疼痛点</button>
+                </div>
+                <div id="hurttxtarea" class="txtarea" hidden="">
+                  <div id="hurtPointList">
+                    <ul>
+                      <li>疼痛</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <div id="reason">成因</div>
+                    <span></span>
+                  </div>
+                  <div>
+                    <div id="solution">手法</div>
+                    <span></span>
+                  </div>
+                  <div id="status">
+                    <button id="healthStatus">正常状态</button>
+                    <button id="painStatus">疼痛状态</button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
