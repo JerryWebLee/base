@@ -11,8 +11,6 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
 // Bloom主要用来模拟生活中的泛光或说眩光效果,通过threejs后期处理的扩展库UnrealBloomPass通道可实现一个泛光效果。
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass';
-// import * as dat from 'dat.gui'
-import AttrListener from './AttrListener'
 
 import { hurtMuscleEffectShader } from './shader'
 
@@ -182,17 +180,11 @@ class MainCanvasRenderer extends CanvansRenderBase {
     this.createFirstElement();
     this.createSecondElement();
     this.renderTreeUI(this.uiData);
-    // console.log(this.uiData);
     this.checked = false;
     this.checkObj = {
-      checked: this.checked,
+      checked: false,
       mulID: ''
     }
-    // 属性监听器
-    this.cameraControls()
-    console.log(this.controls);
-    AttrListener(this.checkObj, this.muscleArr,
-      this.highLightToogle)
   }
   // tree父级
   createFirstElement() {
@@ -226,7 +218,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
   }
   // 渲染 tree
   renderTreeUI(data) {
-    console.log(data);
     layui.use('tree', function () {
       const tree = layui.tree;
       this.tree = tree
@@ -275,12 +266,16 @@ class MainCanvasRenderer extends CanvansRenderBase {
   }
   // 状态改变,出发属性监听回调
   stateChange(obj) {
-    const mesh = this.muscleArr[obj.data.mulID]
-    this.moveCamera2Target(mesh)
+    const muscle = this.muscleArr[obj.data.mulID]
+    this.moveCamera2Target(muscle)
     this.skinArr.forEach((skin) => { skin.visible = !this.checked })
     this.checkObj.checked = this.checked
     this.checkObj.mulID = obj.data.mulID
-    this.highLightToogle.toogle(mesh.name)
+    if (this.checkObj.checked) {
+      this.highLightToogle.toogle(muscle.name)
+    } else {
+      this.highLightToogle.unLightAll()
+    }
   }
   // 重载树
   reloadTreeUI(index, classIndex) {
@@ -320,17 +315,17 @@ class MainCanvasRenderer extends CanvansRenderBase {
       this.showPoints_HideAll();
     }
     // 肌肉的高亮显示
-    else {
-      // let obj = this.getMouseTarget();
-      // if (obj) {
-      //   console.log('肌肉高亮:');
-      //   console.log(obj);
-      //   this.highLightToogle.toogle(obj.name, this.mouseState);
-      // }
-      // else {
-      //   this.highLightToogle.unLightAll();
-      // }
-    }
+    // else {
+    //   let obj = this.getMouseTarget();
+    //   if (obj) {
+    //     console.log('肌肉高亮:');
+    //     console.log(obj);
+    //     this.highLightToogle.toogle(obj.name, this.mouseState);
+    //   }
+    //   else {
+    //     this.highLightToogle.unLightAll();
+    //   }
+    // }
   }
   // 鼠标按下事件,开始拖拽
   onMouseDown(e) {
@@ -365,24 +360,26 @@ class MainCanvasRenderer extends CanvansRenderBase {
         this.highLightToogle.toogle(obj.name)
 
         let mulID = obj.name.split('_')
-        let firstClass = +mulID[0]
-        firstClass -= 1
+        let classIndex = +mulID[0]
+        let dataArr
+        let newObj = null
+        classIndex -= 1
         mulID.pop()
         mulID = mulID.join('_')
-        console.log(mulID);
         if (this.mulID !== mulID) {
           this.mulID = mulID
-          let dataArr = this.uiData[firstClass].children
-          let newObj = null
+          if (this.uiData) {
+            dataArr = this.uiData[classIndex].children
+          }
           dataArr.forEach((item) => {
             if (item.mulID === mulID) {
               newObj = item
-              console.log(item);
             }
           })
           this.reloadTreeUI(newObj.id, newObj.class)
         } else {
           console.log('取消高亮');
+          // this.uiData[classIndex].spread = false;
           this.highLightToogle.unLightAll();
           this.renderTreeUI(this.uiData)
           this.mulID = -1

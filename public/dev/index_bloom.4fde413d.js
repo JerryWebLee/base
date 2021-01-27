@@ -47020,49 +47020,7 @@ UnrealBloomPass.prototype = Object.assign(Object.create(_Pass.Pass.prototype), {
 });
 UnrealBloomPass.BlurDirectionX = new _threeModule.Vector2(1.0, 0.0);
 UnrealBloomPass.BlurDirectionY = new _threeModule.Vector2(0.0, 1.0);
-},{"../../../build/three.module.js":"../../node_modules/three/build/three.module.js","../postprocessing/Pass.js":"../../node_modules/three/examples/jsm/postprocessing/Pass.js","../shaders/CopyShader.js":"../../node_modules/three/examples/jsm/shaders/CopyShader.js","../shaders/LuminosityHighPassShader.js":"../../node_modules/three/examples/jsm/shaders/LuminosityHighPassShader.js"}],"../js/AttrListener.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-function AttrListener(object, muscleArr, highLightToogle) {
-  console.log('监听器中的muscleArr:');
-  console.log(muscleArr);
-  var ischecked = false,
-      mulID = '',
-      mesh;
-
-  function descripterFun(value) {
-    return {
-      enumerable: true,
-      set: function set(newvalue) {
-        if (value !== newvalue) {// value = newvalue;
-          // console.log(value);
-          // if (typeof value === 'boolean') {
-          //   ischecked = value
-          //   console.log('操作当前肌肉' + (value ? '显示' : '隐藏'));
-          // } else if (typeof value === 'string') {
-          //   console.log('更改另一块肌肉显示');
-          //   mulID = value
-          //   mesh = muscleArr[mulID]
-          //   // highLightToogle.toogle(mesh.name)
-          // }
-        }
-      }
-    };
-  }
-
-  for (var i in object) {
-    Object.defineProperty(object, i, descripterFun(object[i]));
-  }
-}
-
-var _default = AttrListener;
-exports.default = _default;
-},{}],"../js/shader.js":[function(require,module,exports) {
+},{"../../../build/three.module.js":"../../node_modules/three/build/three.module.js","../postprocessing/Pass.js":"../../node_modules/three/examples/jsm/postprocessing/Pass.js","../shaders/CopyShader.js":"../../node_modules/three/examples/jsm/shaders/CopyShader.js","../shaders/LuminosityHighPassShader.js":"../../node_modules/three/examples/jsm/shaders/LuminosityHighPassShader.js"}],"../js/shader.js":[function(require,module,exports) {
 var hurtMuscle_vShader = ['varying vec2 vUv;', 'varying vec3 vColor;', 'varying float r;', 'uniform float channelIndex;', 'void main(){', 'vUv = uv;', 'vColor = color;', 'if (channelIndex == 0.0){', 'r=max(color.x-color.y,0.0);}', 'else if(channelIndex == 1.0){', 'r=max(color.y-color.z,0.0);}', 'else if(channelIndex == 2.0){', 'r=max(color.z-color.x,0.0);}', 'gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );', '}'].join('\n');
 var hurtMuscle_fShader = ['varying vec2 vUv;', 'varying vec3 vColor;', 'varying float r;', 'uniform sampler2D diffuseTex;', 'void main() {', 'gl_FragColor=texture2D(diffuseTex, vUv)*vec4(1.0,1.0,0.0,1.0)*(1.0-r)+vec4(0.4,0,0.4,1.0)*r;', 'gl_FragColor.w=0.5;', '}'].join('\n');
 exports.hurtMuscleEffectShader = {
@@ -47103,8 +47061,6 @@ var _RenderPass = require("three/examples/jsm/postprocessing/RenderPass");
 var _ShaderPass = require("three/examples/jsm/postprocessing/ShaderPass");
 
 var _UnrealBloomPass = require("three/examples/jsm/postprocessing/UnrealBloomPass");
-
-var _AttrListener = _interopRequireDefault(require("./AttrListener"));
 
 var _shader = require("./shader");
 
@@ -47313,17 +47269,12 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
     value: function initUI() {
       this.createFirstElement();
       this.createSecondElement();
-      this.renderTreeUI(this.uiData); // console.log(this.uiData);
-
+      this.renderTreeUI(this.uiData);
       this.checked = false;
       this.checkObj = {
-        checked: this.checked,
+        checked: false,
         mulID: ''
-      }; // 属性监听器
-
-      this.cameraControls();
-      console.log(this.controls);
-      (0, _AttrListener.default)(this.checkObj, this.muscleArr, this.highLightToogle);
+      };
     } // tree父级
 
   }, {
@@ -47367,7 +47318,6 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
   }, {
     key: "renderTreeUI",
     value: function renderTreeUI(data) {
-      console.log(data);
       layui.use('tree', function () {
         var tree = layui.tree;
         this.tree = tree; //渲染
@@ -47428,14 +47378,19 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
     value: function stateChange(obj) {
       var _this3 = this;
 
-      var mesh = this.muscleArr[obj.data.mulID];
-      this.moveCamera2Target(mesh);
+      var muscle = this.muscleArr[obj.data.mulID];
+      this.moveCamera2Target(muscle);
       this.skinArr.forEach(function (skin) {
         skin.visible = !_this3.checked;
       });
       this.checkObj.checked = this.checked;
       this.checkObj.mulID = obj.data.mulID;
-      this.highLightToogle.toogle(mesh.name);
+
+      if (this.checkObj.checked) {
+        this.highLightToogle.toogle(muscle.name);
+      } else {
+        this.highLightToogle.unLightAll();
+      }
     } // 重载树
 
   }, {
@@ -47483,16 +47438,18 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
         this.didDrag = true;
         this.showPoints_HideAll();
       } // 肌肉的高亮显示
-      else {// let obj = this.getMouseTarget();
-          // if (obj) {
-          //   console.log('肌肉高亮:');
-          //   console.log(obj);
-          //   this.highLightToogle.toogle(obj.name, this.mouseState);
-          // }
-          // else {
-          //   this.highLightToogle.unLightAll();
-          // }
-        }
+      // else {
+      //   let obj = this.getMouseTarget();
+      //   if (obj) {
+      //     console.log('肌肉高亮:');
+      //     console.log(obj);
+      //     this.highLightToogle.toogle(obj.name, this.mouseState);
+      //   }
+      //   else {
+      //     this.highLightToogle.unLightAll();
+      //   }
+      // }
+
     } // 鼠标按下事件,开始拖拽
 
   }, {
@@ -47534,25 +47491,29 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
           this.moveCamera2Target(obj);
           this.highLightToogle.toogle(obj.name);
           var mulID = obj.name.split('_');
-          var firstClass = +mulID[0];
-          firstClass -= 1;
+          var classIndex = +mulID[0];
+          var dataArr;
+          var newObj = null;
+          classIndex -= 1;
           mulID.pop();
           mulID = mulID.join('_');
-          console.log(mulID);
 
           if (this.mulID !== mulID) {
             this.mulID = mulID;
-            var dataArr = this.uiData[firstClass].children;
-            var newObj = null;
+
+            if (this.uiData) {
+              dataArr = this.uiData[classIndex].children;
+            }
+
             dataArr.forEach(function (item) {
               if (item.mulID === mulID) {
                 newObj = item;
-                console.log(item);
               }
             });
             this.reloadTreeUI(newObj.id, newObj.class);
           } else {
-            console.log('取消高亮');
+            console.log('取消高亮'); // this.uiData[classIndex].spread = false;
+
             this.highLightToogle.unLightAll();
             this.renderTreeUI(this.uiData);
             this.mulID = -1;
@@ -48189,7 +48150,7 @@ var clickObjBase = function clickObjBase() {
 
 exports.MainCanvasRenderer = MainCanvasRenderer;
 exports.showPoint = showPoint;
-},{"@babel/runtime/helpers/get":"../../node_modules/@babel/runtime/helpers/get.js","@babel/runtime/regenerator":"../../node_modules/@babel/runtime/regenerator/index.js","@babel/runtime/helpers/asyncToGenerator":"../../node_modules/@babel/runtime/helpers/asyncToGenerator.js","@babel/runtime/helpers/classCallCheck":"../../node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/createClass":"../../node_modules/@babel/runtime/helpers/createClass.js","@babel/runtime/helpers/inherits":"../../node_modules/@babel/runtime/helpers/inherits.js","@babel/runtime/helpers/possibleConstructorReturn":"../../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js","@babel/runtime/helpers/getPrototypeOf":"../../node_modules/@babel/runtime/helpers/getPrototypeOf.js","three/build/three.module":"../../node_modules/three/build/three.module.js","axios":"../../node_modules/axios/index.js","three/examples/jsm/controls/OrbitControls":"../../node_modules/three/examples/jsm/controls/OrbitControls.js","./utils":"../js/utils.js","three/examples/jsm/postprocessing/EffectComposer":"../../node_modules/three/examples/jsm/postprocessing/EffectComposer.js","three/examples/jsm/postprocessing/RenderPass":"../../node_modules/three/examples/jsm/postprocessing/RenderPass.js","three/examples/jsm/postprocessing/ShaderPass":"../../node_modules/three/examples/jsm/postprocessing/ShaderPass.js","three/examples/jsm/postprocessing/UnrealBloomPass":"../../node_modules/three/examples/jsm/postprocessing/UnrealBloomPass.js","./AttrListener":"../js/AttrListener.js","./shader":"../js/shader.js"}],"../js/index_bloom.js":[function(require,module,exports) {
+},{"@babel/runtime/helpers/get":"../../node_modules/@babel/runtime/helpers/get.js","@babel/runtime/regenerator":"../../node_modules/@babel/runtime/regenerator/index.js","@babel/runtime/helpers/asyncToGenerator":"../../node_modules/@babel/runtime/helpers/asyncToGenerator.js","@babel/runtime/helpers/classCallCheck":"../../node_modules/@babel/runtime/helpers/classCallCheck.js","@babel/runtime/helpers/createClass":"../../node_modules/@babel/runtime/helpers/createClass.js","@babel/runtime/helpers/inherits":"../../node_modules/@babel/runtime/helpers/inherits.js","@babel/runtime/helpers/possibleConstructorReturn":"../../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js","@babel/runtime/helpers/getPrototypeOf":"../../node_modules/@babel/runtime/helpers/getPrototypeOf.js","three/build/three.module":"../../node_modules/three/build/three.module.js","axios":"../../node_modules/axios/index.js","three/examples/jsm/controls/OrbitControls":"../../node_modules/three/examples/jsm/controls/OrbitControls.js","./utils":"../js/utils.js","three/examples/jsm/postprocessing/EffectComposer":"../../node_modules/three/examples/jsm/postprocessing/EffectComposer.js","three/examples/jsm/postprocessing/RenderPass":"../../node_modules/three/examples/jsm/postprocessing/RenderPass.js","three/examples/jsm/postprocessing/ShaderPass":"../../node_modules/three/examples/jsm/postprocessing/ShaderPass.js","three/examples/jsm/postprocessing/UnrealBloomPass":"../../node_modules/three/examples/jsm/postprocessing/UnrealBloomPass.js","./shader":"../js/shader.js"}],"../js/index_bloom.js":[function(require,module,exports) {
 "use strict";
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
