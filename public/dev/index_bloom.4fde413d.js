@@ -47079,7 +47079,7 @@ var ENTIRE_SCENE = 0,
     BLOOM_SCENE = 2;
 var bloomLayer = new THREE.Layers();
 bloomLayer.set(BLOOM_SCENE);
-var muscleClassNameArr = ['头颈部', '肩颈部', '手臂部', '胸腹部', '腰背部', '腿脚部', '其他']; // canvas渲染
+var muscleClassNameArr = ['头颈部', '肩颈部', '手臂部', '胸腹部', '腰背部', '腿脚部']; // canvas渲染
 
 var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
   (0, _inherits2.default)(MainCanvasRenderer, _CanvansRenderBase);
@@ -47102,7 +47102,7 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
             switch (_context.prev = _context.next) {
               case 0:
                 _context.next = 2;
-                return this.loadFBX('../resource/models/ALL4.FBX');
+                return this.loadFBX('../resource/models/ALL5.FBX');
 
               case 2:
                 body = _context.sent;

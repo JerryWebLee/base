@@ -18,7 +18,7 @@ import { hurtMuscleEffectShader } from './shader'
 const ENTIRE_SCENE = 0, BLOOM_SCENE = 2;
 const bloomLayer = new THREE.Layers();
 bloomLayer.set(BLOOM_SCENE);
-const muscleClassNameArr = ['头颈部', '肩颈部', '手臂部', '胸腹部', '腰背部', '腿脚部', '其他'];
+const muscleClassNameArr = ['头颈部', '肩颈部', '手臂部', '胸腹部', '腰背部', '腿脚部'];
 // canvas渲染
 class MainCanvasRenderer extends CanvansRenderBase {
   constructor(canvas) {
@@ -27,7 +27,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
   // 模型加载渲染引擎
   async run() {
 
-    let body = await this.loadFBX('../resource/models/ALL4.FBX');
+    let body = await this.loadFBX('../resource/models/ALL5.FBX');
     this.scene.add(body);
     this.camera.far = 1000;
 
