@@ -164,12 +164,28 @@ class MainCanvasRenderer extends CanvansRenderBase {
       }
     }
     this.hideArr = [];
+    // 肌肉操作
+    let disableButton = document.getElementById('disableButton');
     let cancelButton = document.getElementById('cancelButton');
     let restartButton = document.getElementById('restartButton');
 
-    // this.showPoints_HideAll();
+    this.showPoints_HideAll();
+    disableButton.addEventListener('click', this.onDisableBtnClick.bind(this));
     cancelButton.addEventListener('click', this.cancelClick.bind(this));
     restartButton.addEventListener('click', this.restartClick.bind(this));
+
+  }
+  // 隐藏肌肉
+  onDisableBtnClick(e) {
+    if (this.highLightToogle.currentElement) {
+      if (!this.hideMuscleArr) {
+        this.hideMuscleArr = [];
+      }
+      this.hideMuscleArr.push(this.highLightToogle.currentElement.obj);
+      this.highLightToogle.currentElement.obj.visible = false;
+      this.highLightToogle.unLightAll();
+    }
+
   }
 
   initMuscle(obj) {
@@ -226,6 +242,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
   }
   // 渲染 tree
   renderTreeUI(data) {
+    // console.log(JSON.stringify(data));
     layui.use('tree', function () {
       const tree = layui.tree;
       this.tree = tree
@@ -366,9 +383,8 @@ class MainCanvasRenderer extends CanvansRenderBase {
     this.clickTimer = setTimeout(function () {
       let obj = this.getMouseTarget();
       if (obj) {
-        this.moveCamera2Target(obj);
-        this.highLightToogle.toogle(obj.name)
 
+        // 解析点击的肌肉信息
         let mulID = obj.name.split('_')
         let classIndex = +mulID[0]
         let dataArr
@@ -378,6 +394,9 @@ class MainCanvasRenderer extends CanvansRenderBase {
         mulID = mulID.join('_')
         if (this.mulID !== mulID) {
           this.mulID = mulID
+          // 移动相机,肌肉高亮
+          this.moveCamera2Target(obj);
+          this.highLightToogle.toogle(obj.name)
           if (this.uiData) {
             dataArr = this.uiData[classIndex].children
           }
@@ -493,7 +512,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
       point.hide();
     })
   }
-  // 图标点点击取消事件
+  // 撤销隐藏肌肉操作
   cancelClick() {
     if (this.hideArr.length > 0) {
       let obj = this.hideArr.pop();
@@ -505,7 +524,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
       this.showPointsTest();
     }
   }
-  // 图标点重新点击事件
+  // 模型复位
   restartClick() {
     while (this.hideArr.length > 0) {
       let obj = this.hideArr.pop();
@@ -516,10 +535,8 @@ class MainCanvasRenderer extends CanvansRenderBase {
       }
     }
     this.showPoints_HideAll();
-    this.camera.position.set(0, 1.4, 1.2);
-    this.controls.target.set(0, 1.4, 0);
-
-
+    this.camera.position.set(0.0, 1.0, 3.0);
+    this.controls.target.set(0, 1, 0);
   }
 
   // 辉光
@@ -602,10 +619,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
 
 class highLightToogle {
   constructor(arr) {
-    // let highLightMat = new THREE.MeshBasicMaterial();
-    // let highLightMat =arr[0].material.clone();
-    // highLightMat.color=new THREE.Color(0xaaaaaa);
-    // highLightMat.wireframe=true
     // make sure obj has mat
     let elementArr = []
     let highLightMatArr = []
@@ -642,7 +655,8 @@ class highLightToogle {
     this.elementArr = elementArr;
 
     this.txtarea = document.getElementById('txtarea');
-    this.cNameTxt = document.getElementById('name');
+    this.cNameTxt = document.getElementById('nameTxt');
+    this.bodyClassNameTxt = document.getElementById('bodyClassNameTxt')
   }
   // 鼠标状态默认为空
   toogle(name, mouseState = null) {
@@ -658,17 +672,10 @@ class highLightToogle {
       this.currentElement = this.elementArr[name];
       this.currentElement.highLight();
     }
-
-    if (mouseState && this.currentElement.obj.cName) {
-      this.txtarea.style.left = (mouseState.x + 30) + 'px';
-      this.txtarea.style.top = (mouseState.y - 20) + 'px';
-      this.cNameTxt.innerText = this.currentElement.obj.cName;
-      this.txtarea.hidden = false
-    }
-    else {
-      this.txtarea.hidden = false
-
-    }
+    let index = this.currentElement.obj.index.split('_')[0] - 1
+    this.cNameTxt.innerText = this.currentElement.obj.cName;
+    this.bodyClassNameTxt.innerText = muscleClassNameArr[index]
+    this.txtarea.hidden = false
   }
 
   unLightAll() {

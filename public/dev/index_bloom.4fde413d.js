@@ -47252,12 +47252,29 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
         }
       }
 
-      this.hideArr = [];
-      var cancelButton = document.getElementById('cancelButton');
-      var restartButton = document.getElementById('restartButton'); // this.showPoints_HideAll();
+      this.hideArr = []; // 肌肉操作
 
+      var disableButton = document.getElementById('disableButton');
+      var cancelButton = document.getElementById('cancelButton');
+      var restartButton = document.getElementById('restartButton');
+      this.showPoints_HideAll();
+      disableButton.addEventListener('click', this.onDisableBtnClick.bind(this));
       cancelButton.addEventListener('click', this.cancelClick.bind(this));
       restartButton.addEventListener('click', this.restartClick.bind(this));
+    } // 隐藏肌肉
+
+  }, {
+    key: "onDisableBtnClick",
+    value: function onDisableBtnClick(e) {
+      if (this.highLightToogle.currentElement) {
+        if (!this.hideMuscleArr) {
+          this.hideMuscleArr = [];
+        }
+
+        this.hideMuscleArr.push(this.highLightToogle.currentElement.obj);
+        this.highLightToogle.currentElement.obj.visible = false;
+        this.highLightToogle.unLightAll();
+      }
     }
   }, {
     key: "initMuscle",
@@ -47327,6 +47344,7 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
   }, {
     key: "renderTreeUI",
     value: function renderTreeUI(data) {
+      // console.log(JSON.stringify(data));
       layui.use('tree', function () {
         var tree = layui.tree;
         this.tree = tree; //渲染
@@ -47497,8 +47515,7 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
         var obj = this.getMouseTarget();
 
         if (obj) {
-          this.moveCamera2Target(obj);
-          this.highLightToogle.toogle(obj.name);
+          // 解析点击的肌肉信息
           var mulID = obj.name.split('_');
           var classIndex = +mulID[0];
           var dataArr;
@@ -47508,7 +47525,10 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
           mulID = mulID.join('_');
 
           if (this.mulID !== mulID) {
-            this.mulID = mulID;
+            this.mulID = mulID; // 移动相机,肌肉高亮
+
+            this.moveCamera2Target(obj);
+            this.highLightToogle.toogle(obj.name);
 
             if (this.uiData) {
               dataArr = this.uiData[classIndex].children;
@@ -47637,7 +47657,7 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
       this.showPointArr.forEach(function (point) {
         point.hide();
       });
-    } // 图标点点击取消事件
+    } // 撤销隐藏肌肉操作
 
   }, {
     key: "cancelClick",
@@ -47653,7 +47673,7 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
 
         this.showPointsTest();
       }
-    } // 图标点重新点击事件
+    } // 模型复位
 
   }, {
     key: "restartClick",
@@ -47669,8 +47689,8 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
       }
 
       this.showPoints_HideAll();
-      this.camera.position.set(0, 1.4, 1.2);
-      this.controls.target.set(0, 1.4, 0);
+      this.camera.position.set(0.0, 1.0, 3.0);
+      this.controls.target.set(0, 1, 0);
     } // 辉光
 
   }, {
@@ -47754,10 +47774,6 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
 var highLightToogle = /*#__PURE__*/function () {
   function highLightToogle(arr) {
     (0, _classCallCheck2.default)(this, highLightToogle);
-    // let highLightMat = new THREE.MeshBasicMaterial();
-    // let highLightMat =arr[0].material.clone();
-    // highLightMat.color=new THREE.Color(0xaaaaaa);
-    // highLightMat.wireframe=true
     // make sure obj has mat
     var elementArr = [];
     var highLightMatArr = [];
@@ -47794,7 +47810,8 @@ var highLightToogle = /*#__PURE__*/function () {
 
     this.elementArr = elementArr;
     this.txtarea = document.getElementById('txtarea');
-    this.cNameTxt = document.getElementById('name');
+    this.cNameTxt = document.getElementById('nameTxt');
+    this.bodyClassNameTxt = document.getElementById('bodyClassNameTxt');
   } // 鼠标状态默认为空
 
 
@@ -47815,14 +47832,10 @@ var highLightToogle = /*#__PURE__*/function () {
         this.currentElement.highLight();
       }
 
-      if (mouseState && this.currentElement.obj.cName) {
-        this.txtarea.style.left = mouseState.x + 30 + 'px';
-        this.txtarea.style.top = mouseState.y - 20 + 'px';
-        this.cNameTxt.innerText = this.currentElement.obj.cName;
-        this.txtarea.hidden = false;
-      } else {
-        this.txtarea.hidden = false;
-      }
+      var index = this.currentElement.obj.index.split('_')[0] - 1;
+      this.cNameTxt.innerText = this.currentElement.obj.cName;
+      this.bodyClassNameTxt.innerText = muscleClassNameArr[index];
+      this.txtarea.hidden = false;
     }
   }, {
     key: "unLightAll",
