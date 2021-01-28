@@ -1,0 +1,168 @@
+.myCavnas {
+  position: absolute;
+  top: 0px;
+  left: 0%;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.button {
+  width: 75px;
+  height: 75px;
+  position: relative;
+  top: 20px;
+  left: 20px;
+  margin-right: 30px;
+  z-index: 3;
+  float: left;
+}
+.el-card {
+  width: 375px;
+  height: 400px;
+  position: relative;
+  top: 20px;
+  right: 20px;
+  margin-right: 0px;
+  z-index: 3;
+  float: right;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #ebeef5;
+  background-color: #fff;
+  color: #303133;
+  font-weight: bold;
+  font-family: 'Microsoft YaHei', 微软雅黑, 'MicrosoftJhengHei', 华文细黑, STHeiti, MingLiu;
+  font-size: 18px;
+}
+.el-card.is-always-shadow {
+  -webkit-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+.el-card__header {
+  padding: 18px 20px;
+  border-bottom: 1px solid #ebeef5;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.el-card__body {
+  padding: 20px;
+}
+.btn {
+  width: 270px;
+  height: 40px;
+  border-width: 0px;
+  border-radius: 3px;
+  margin: 10px 0;
+  background: #1e90ff;
+  cursor: pointer;
+  outline: none;
+  font-family: 'Microsoft YaHei', 微软雅黑, 'MicrosoftJhengHei', 华文细黑, STHeiti, MingLiu;
+  color: white;
+  font-size: 16px;
+}
+.btn:hover {
+  background: #5599ff;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+.loading-wrapper {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  z-index: 10;
+  background: #0d0504;
+  pointer-events: none;
+  opacity: 1;
+  -webkit-transition: opacity 1s;
+  -o-transition: opacity 1s;
+  transition: opacity 1s;
+}
+
+.loading-wrapper.hide {
+  opacity: 0;
+}
+
+.loading {
+  text-transform: uppercase;
+  font-family: 'Cabin Condensed', sans-serif;
+  font-weight: bold;
+  font-size: 10vw;
+  text-align: center;
+  height: 120px;
+  line-height: 110px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  bottom: 0;
+  display: block;
+  margin-top: -55px;
+}
+
+.wave {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAAEsBAMAAAB01OGNAAAAGFBMVEVHcEz///////////////////////////8dS1W+AAAAB3RSTlMAwzxw6B2ahbHkBwAAATlJREFUeNrt1U1Kw1AYhtEQ6QKCxU5rRMfaovNO7FR0BTUFx4XCu30HgohUm5irODjPAnK4X+5PVUmSJEmSJEmSJEmSJKl/bdte/t7XJxebZpq3dk23eCgu1MtNPrfqii6p3uZwq2LrqW/ydfvTeYlfcbfOtxVgnmY52r4bN7Tz9Gp3O2JU2/Tt9KeLmbykf7vrn+2qIUayf66GD62eZWDV4KGdrDMcGbgDnoYbqZLkfl566x5Akp6Hs95mBNLvDrhaZxSS5Ox2/EVyFPn+IbiYJkWQJKuuPSA83s2SckiSfdMt2g9P93IzSjiMvFtNM02RqvxBEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAjknyGvAYIsZF2hFewAAAAASUVORK5CYII=);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0px 0px rgba(255, 255, 255, 0.06);
+  -webkit-animation: wave-animation 1s infinite linear, loading-animation 6s infinite linear alternate;
+  animation: wave-animation 1s infinite linear, loading-animation 6s infinite linear alternate;
+  background-size: 200px 100px;
+  background-repeat: repeat-x;
+  opacity: 1;
+}
+
+@-webkit-keyframes wave-animation {
+  0% {
+    background-position: 0 bottom;
+  }
+
+  100% {
+    background-position: 200px bottom;
+  }
+}
+
+@keyframes wave-animation {
+  0% {
+    background-position: 0 bottom;
+  }
+
+  100% {
+    background-position: 200px bottom;
+  }
+}
+
+@-webkit-keyframes loading-animation {
+  0% {
+    background-size: 200px 0px;
+  }
+
+  100% {
+    background-size: 200px 200px;
+  }
+}
+
+@keyframes loading-animation {
+  0% {
+    background-size: 200px 0px;
+  }
+
+  100% {
+    background-size: 200px 200px;
+  }
+}
+
+
+/*# sourceMappingURL=/dev/mycss_editor.603e75bf.css.map */

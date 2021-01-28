@@ -46,7 +46,9 @@ class MainCanvasRenderer extends CanvansRenderBase {
     })
     // 响应式设计
     window.onresize = function () {
-      this.showPointsTest()
+      if (this.showFlag) {
+        this.showPointsTest()
+      }
       this.camera.aspect = this.canvas.offsetWidth / this.canvas.offsetHeight;
       this.camera.updateProjectionMatrix();
     }.bind(this)
@@ -82,6 +84,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
     let hightLightArr = [];
     this.muscleContainer = []
     this.muscleContainer.indexArr = []
+    this.showFlag = false
 
     // 遍历组中的对象属性
     this.body.traverse((obj) => {
@@ -166,14 +169,31 @@ class MainCanvasRenderer extends CanvansRenderBase {
     this.hideArr = [];
     // 肌肉操作
     let disableButton = document.getElementById('disableButton');
-    let cancelButton = document.getElementById('cancelButton');
+    let undoButton = document.getElementById('undoButton');
+    // let cancelButton = document.getElementById('cancelButton');
     let restartButton = document.getElementById('restartButton');
+    let allHurtPointShow = document.getElementById('allShow');
+    let allHurtPointHidden = document.getElementById('allHidden');
 
     this.showPoints_HideAll();
     disableButton.addEventListener('click', this.onDisableBtnClick.bind(this));
-    cancelButton.addEventListener('click', this.cancelClick.bind(this));
-    restartButton.addEventListener('click', this.restartClick.bind(this));
-
+    undoButton.addEventListener('click', this.onUndoBtnClick.bind(this));
+    restartButton.addEventListener('click', this.onRestartBtnClick.bind(this));
+    allHurtPointShow.addEventListener('click', this.onShowPointClick.bind(this));
+    allHurtPointHidden.addEventListener('click', this.onHidePointClick.bind(this));
+  }
+  onShowPointClick(e) {
+    console.log('显示所有疼痛点');
+    if (this.skinArr.length > 0) {
+      this.skinArr.forEach((skin) => { skin.visible = false })
+    }
+    this.showPointsTest()
+    this.showFlag = true
+  }
+  onHidePointClick(e) {
+    console.log('隐藏所有疼痛点');
+    this.showPoints_HideAll()
+    this.showFlag = false
   }
   // 隐藏肌肉
   onDisableBtnClick(e) {
@@ -184,13 +204,51 @@ class MainCanvasRenderer extends CanvansRenderBase {
       this.hideMuscleArr.push(this.highLightToogle.currentElement.obj);
       this.highLightToogle.currentElement.obj.visible = false;
       this.highLightToogle.unLightAll();
+      this.renderTreeUI(this.uiData)
     }
+  }
+  // 撤销隐藏肌肉操作
+  onUndoBtnClick(e) {
+    if (this.hideMuscleArr && this.hideMuscleArr.length > 0) {
+      const obj = this.hideMuscleArr.pop();
+      this.muscleHightLightToogle(obj)
+      this.highLightToogle.toogle(obj.name);
+      obj.visible = true;
+    }
+  }
+  // 模型复位
+  onRestartBtnClick(e) {
+    if (this.hideMuscleArr && this.hideMuscleArr.length > 0) {
+      this.hideMuscleArr.forEach(obj => {
+        // this.toogle.toogle(obj.name);
+        obj.visible = true;
+      });
+    }
+    this.highLightToogle.unLightAll();
+    this.hideMuscleArr = [];
+    this.camera.position.set(0.0, 1.0, 3.0);
+    this.controls.target.set(0.0, 1.0, 0.0);
+    this.showPoints_HideAll()
+    this.uiData.forEach(item => { item.spread = false })
+    this.renderTreeUI(this.uiData)
+  }
 
+  // 模型复位 待用
+  restartClick() {
+    while (this.hideArr.length > 0) {
+      let obj = this.hideArr.pop();
+      obj.visible = true;
+      if (obj.showPoint) {
+        obj.showPoint.visible = true;
+        obj.showPoint.hide();
+      }
+    }
+    this.showPoints_HideAll();
+    this.camera.position.set(0.0, 1.0, 3.0);
+    this.controls.target.set(0, 1, 0);
   }
 
   initMuscle(obj) {
-    // console.log('initMuscle');
-    // console.log(obj.index);
     if (!this.muscleContainer[obj.index]) {
       this.muscleContainer[obj.index] = new Muscular(obj);
       this.muscleContainer.indexArr.push(obj.index);
@@ -290,7 +348,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
   }
   // 状态改变
   stateChange(obj) {
-    console.log(obj);
     const muscle = this.muscleArr[obj.data.mulID]
     this.moveCamera2Target(muscle)
     this.skinArr.forEach((skin) => { skin.visible = !this.checked })
@@ -365,13 +422,17 @@ class MainCanvasRenderer extends CanvansRenderBase {
     // console.log('end  drag')
     this.mouseDown = false
     if (this.dragChange) {
-      this.showPointsTest();
+      if (this.showFlag) {
+        this.showPointsTest()
+      }
     }
   }
   // 鼠标滚动时,根据模型更新图标点的位置
   onMouseWheel(e) {
     // console.log('my whell handle')
-    this.showPointsTest();
+    if (this.showFlag) {
+      this.showPointsTest()
+    }
   }
 
   onMouseClick(e) {
@@ -382,39 +443,42 @@ class MainCanvasRenderer extends CanvansRenderBase {
     // 点击肌肉高亮显示
     this.clickTimer = setTimeout(function () {
       let obj = this.getMouseTarget();
-      if (obj) {
-
-        // 解析点击的肌肉信息
-        let mulID = obj.name.split('_')
-        let classIndex = +mulID[0]
-        let dataArr
-        let newObj = null
-        classIndex -= 1
-        mulID.pop()
-        mulID = mulID.join('_')
-        if (this.mulID !== mulID) {
-          this.mulID = mulID
-          // 移动相机,肌肉高亮
-          this.moveCamera2Target(obj);
-          this.highLightToogle.toogle(obj.name)
-          if (this.uiData) {
-            dataArr = this.uiData[classIndex].children
-          }
-          dataArr.forEach((item) => {
-            if (item.mulID === mulID) {
-              newObj = item
-            }
-          })
-          this.reloadTreeUI(newObj.id, newObj.class)
-        } else {
-          // 取消高亮
-          // this.uiData[classIndex].spread = false;
-          this.highLightToogle.unLightAll();
-          this.renderTreeUI(this.uiData)
-          this.mulID = -1
-        }
-      }
+      this.muscleHightLightToogle(obj)
     }.bind(this), 300);
+  }
+  // 肌肉高亮显示切换,且更新layui tree
+  muscleHightLightToogle(obj) {
+    if (obj && !obj.name.match('Skin')) {
+      // 解析点击的肌肉信息
+      let mulID = obj.name.split('_')
+      let classIndex = +mulID[0]
+      let dataArr
+      let newObj = null
+      classIndex -= 1
+      mulID.pop()
+      mulID = mulID.join('_')
+      if (this.mulID !== mulID) {
+        this.mulID = mulID
+        // 移动相机,肌肉高亮
+        this.moveCamera2Target(obj);
+        this.highLightToogle.toogle(obj.name)
+        if (this.uiData) {
+          dataArr = this.uiData[classIndex].children
+        }
+        dataArr.forEach((item) => {
+          if (item.mulID === mulID) {
+            newObj = item
+          }
+        })
+        this.reloadTreeUI(newObj.id, newObj.class)
+      } else {
+        // 取消高亮
+        // this.uiData[classIndex].spread = false;
+        this.highLightToogle.unLightAll();
+        this.renderTreeUI(this.uiData)
+        this.mulID = -1
+      }
+    }
   }
   // 双击皮肤和肌肉的隐藏
   onMouseDBClick(e) {
@@ -423,22 +487,29 @@ class MainCanvasRenderer extends CanvansRenderBase {
     // console.log(obj);
     if (obj) {
       if (obj.name.match('Skin')) {
-        // console.log(obj);
-        // console.log(this.skinArr);
+        // console.log(obj.name);
         obj.visible = false;
       }
       obj.material.opacity = 0.7
-      // obj.material.opacity = 1
+      obj.material.opacity = 1
       obj.material.transparent = true;
+      if (!this.hideMuscleArr) {
+        this.hideMuscleArr = [];
+      }
+      if (!obj.name.match('Skin')) {
+        this.hideMuscleArr.push(obj);
+      }
       obj.visible = false;
-      this.showPointsTest();
-
+      this.renderTreeUI(this.uiData)
+      if (this.showFlag) {
+        this.showPointsTest()
+      }
     }
     // console.log('dbclick');
   }
   // 图标点的显示隐藏
   showPointsTest() {
-    console.log(this.showPointArr);
+    // console.log(this.showPointArr);
     this.showPointArr.forEach((point) => {
 
       if (this.showPointVisibleTest(point.obj)) {
@@ -483,7 +554,9 @@ class MainCanvasRenderer extends CanvansRenderBase {
     this.controls.target = targetV;
     this.controls.update();
     this.camera.updateMatrixWorld();
-    this.showPointsTest();
+    if (this.showFlag) {
+      this.showPointsTest()
+    }
     // console.log(this.camera);
     let dir = this.camera.position.clone();
     dir.sub(targetV);
@@ -521,23 +594,12 @@ class MainCanvasRenderer extends CanvansRenderBase {
         obj.showPoint.visible = true;
         obj.showPoint.show();
       }
-      this.showPointsTest();
-    }
-  }
-  // 模型复位
-  restartClick() {
-    while (this.hideArr.length > 0) {
-      let obj = this.hideArr.pop();
-      obj.visible = true;
-      if (obj.showPoint) {
-        obj.showPoint.visible = true;
-        obj.showPoint.hide();
+      if (this.showFlag) {
+        this.showPointsTest()
       }
     }
-    this.showPoints_HideAll();
-    this.camera.position.set(0.0, 1.0, 3.0);
-    this.controls.target.set(0, 1, 0);
   }
+
 
   // 辉光
   createBloom() {
@@ -672,7 +734,10 @@ class highLightToogle {
       this.currentElement = this.elementArr[name];
       this.currentElement.highLight();
     }
-    let index = this.currentElement.obj.index.split('_')[0] - 1
+    let index
+    if (this.currentElement.obj.index) {
+      index = this.currentElement.obj.index.split('_')[0] - 1
+    }
     this.cNameTxt.innerText = this.currentElement.obj.cName;
     this.bodyClassNameTxt.innerText = muscleClassNameArr[index]
     this.txtarea.hidden = false
@@ -767,7 +832,6 @@ class showPoint_base {
     if ((left + 75) > canvas.offsetWidth) {
       this.hide();
       return;
-
     }
     left -= this.image.width / 2;
     top -= this.image.height / 2;
@@ -794,24 +858,15 @@ class showPoint_base {
 
   }
   onMouseOver(e) {
-
-
     this.image.width = this.bigSize[0];
     this.image.height = this.bigSize[1];
     // if (this.parent.highLightManager) {
-
     //     this.parent.highLightManager.unLightAll();
     // }
-
-
-
   }
   onMouseOut(e) {
-
     this.image.width = this.baseSize[0];
     this.image.height = this.baseSize[1];
-
-
   }
   onClick(e) {
     console.log(this.obj.name);
@@ -822,13 +877,10 @@ class showPoint_base {
     obj.visible = false;
     obj.showPoint.visible = false;
     obj.showPoint.hide();
-
-
   }
-
-
 }
 
+// 疼痛点显示
 class showPoint extends showPoint_base {
   constructor(obj, hurtObj, manager, canvas, camera, iconUrl = '../resource/point5.png', baseSize = [15, 15], bigSize = [20, 20]) {
     super(obj, canvas, camera, iconUrl, baseSize = [15, 15], bigSize = [20, 20])
