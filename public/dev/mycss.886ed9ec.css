@@ -110,7 +110,7 @@
 .el-card__body {
   padding: 20px;
 }
-.btn {
+/* .btn {
   width: 270px;
   height: 40px;
   border-width: 0px;
@@ -125,7 +125,7 @@
 }
 .btn:hover {
   background: #5599ff;
-}
+} */
 
 * {
   margin: 0;

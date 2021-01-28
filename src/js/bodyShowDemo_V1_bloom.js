@@ -38,6 +38,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
     this.render();
     // 是否展示全部疼痛点
     this.isShowAllHurtPoint = false
+    this.checkedMuscle = null
 
     this.showPointArr.forEach((obj) => {
       obj.hurtObj.bloomObj.layers.toggle(BLOOM_SCENE);
@@ -175,15 +176,15 @@ class MainCanvasRenderer extends CanvansRenderBase {
     let allHurtPointShow = document.getElementById('allShow');
     let allHurtPointHidden = document.getElementById('allHidden');
 
-    this.showPoints_HideAll();
     disableButton.addEventListener('click', this.onDisableBtnClick.bind(this));
     undoButton.addEventListener('click', this.onUndoBtnClick.bind(this));
     restartButton.addEventListener('click', this.onRestartBtnClick.bind(this));
     allHurtPointShow.addEventListener('click', this.onShowPointClick.bind(this));
     allHurtPointHidden.addEventListener('click', this.onHidePointClick.bind(this));
+
+    this.showPoints_HideAll();
   }
   onShowPointClick(e) {
-    console.log('显示所有疼痛点');
     if (this.skinArr.length > 0) {
       this.skinArr.forEach((skin) => { skin.visible = false })
     }
@@ -191,7 +192,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
     this.showFlag = true
   }
   onHidePointClick(e) {
-    console.log('隐藏所有疼痛点');
     this.showPoints_HideAll()
     this.showFlag = false
   }
@@ -355,8 +355,12 @@ class MainCanvasRenderer extends CanvansRenderBase {
     this.checkObj.mulID = obj.data.mulID
     if (this.checkObj.checked) {
       this.highLightToogle.toogle(muscle.name)
+      this.checkedMuscle = muscle
     } else {
       this.highLightToogle.unLightAll()
+      this.showPoints_HideAll()
+      this.showFlag = false
+      this.checkedMuscle = null
     }
   }
   // 重载layui树
@@ -461,6 +465,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
         this.mulID = mulID
         // 移动相机,肌肉高亮
         this.moveCamera2Target(obj);
+        this.checkedMuscle = obj
         this.highLightToogle.toogle(obj.name)
         if (this.uiData) {
           dataArr = this.uiData[classIndex].children
@@ -472,6 +477,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
         })
         this.reloadTreeUI(newObj.id, newObj.class)
       } else {
+        this.checkedMuscle = null
         // 取消高亮
         // this.uiData[classIndex].spread = false;
         this.highLightToogle.unLightAll();
@@ -869,7 +875,7 @@ class showPoint_base {
     this.image.height = this.baseSize[1];
   }
   onClick(e) {
-    console.log(this.obj.name);
+    // console.log(this.obj.name);
   }
   onDblClick(e) {
     // console.log(e)
@@ -950,24 +956,27 @@ class showPoint extends showPoint_base {
   }
   onMouseOver(e) {
     super.onMouseOver(e);
-    this.manager.highLightToogle.unLightAll();
+    if (this.manager.checkedMuscle) {
+      this.manager.muscleHightLightToogle(this.manager.checkedMuscle)
+    }
+
   }
   onMouseOut(e) {
     super.onMouseOut(e);
   }
   onClick(e) {
     // console.log(this.hurtObj.name);
-
+    this.bloomToogle()
+  }
+  bloomToogle() {
     this.hurtObj.bloomObj.layers.toggle(BLOOM_SCENE);
-
     if (this.hurtObj.bloomObj.layers.test(bloomLayer)) {
-
       // console.log("bloomOBj is in bloom layer")
       this.hurtObj.visible = true;
       this.hurtObj.bloomObj.visible = true;
       this.manager.moveCamera2Target(this.hurtObj);
       this.muscleArr.forEach((obj) => {
-        // console.log(obj.index)
+        // console.log(obj)
         obj.material = this.newMat;
         obj.renderOrder = 1;
         obj.highLightAble = false;
@@ -977,21 +986,14 @@ class showPoint extends showPoint_base {
     }
     else {
       // console.log("bloomOBj is in not bloom layer")
-
       this.hurtObj.visible = false;
       this.hurtObj.bloomObj.visible = false;
-
       this.muscleArr.forEach((obj) => {
-
         obj.material = this.oldMat;
         obj.renderOrder = 0;
         obj.highLightAble = true;
         obj.renderOrder = 10;
-
-
       })
-
-
     }
   }
   onDblClick(e) {
