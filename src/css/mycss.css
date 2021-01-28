@@ -110,22 +110,6 @@
 .el-card__body {
   padding: 20px;
 }
-/* .btn {
-  width: 270px;
-  height: 40px;
-  border-width: 0px;
-  border-radius: 3px;
-  margin: 10px 0;
-  background: #1e90ff;
-  cursor: pointer;
-  outline: none;
-  font-family: 'Microsoft YaHei', 微软雅黑, 'MicrosoftJhengHei', 华文细黑, STHeiti, MingLiu;
-  color: white;
-  font-size: 16px;
-}
-.btn:hover {
-  background: #5599ff;
-} */
 
 * {
   margin: 0;
