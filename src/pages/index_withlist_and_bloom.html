@@ -66,20 +66,27 @@
             </div>
           </div>
           <div class="el-card__body">
-            <div id="bodyClass">
+            <div id="bodyClass" class="muscleInfoContainer">
               <span id="bodyClassName">所属身体部分:</span>
               <span id="bodyClassNameTxt"></span>
             </div>
             <!-- 有疼痛点的肌肉显示疼痛点按钮 -->
-            <div id="hurtPoint">
-              <div id="isShowCurrentPoint">显示/隐藏当前肌肉疼痛点</div>
-              <button id="muscleStatusBtn" class="muscleStatusBtn">健康状态/损伤状态</button>
-              <ul>
+            <div id="hurtPoint" class="muscleInfoContainer" hidden>
+              <div id="showCurrentHurtPoint">
+                <div id="isShowCurrentPoint" class="inline">显示/隐藏当前肌肉疼痛点:</div>
+                <div class="inline">
+                  <image id="currentShow" src="../resource/allShow.png" class="button"></image>
+                  <image id="currenHidden" src="../resource/allHidden.png" class="button"></image>
+                </div>
+              </div>
+              <div class="muscleInfoContainer">疼痛点信息:</div>
+              <ul id="hurtPointList">
                 <li>疼痛点1</li>
                 <li>疼痛点2</li>
                 <li>疼痛点3</li>
                 <li>疼痛点4</li>
               </ul>
+              <button id="muscleStatusBtn" class="muscleStatusBtn">健康状态/损伤状态</button>
             </div>
 
             <div id="hurttxtarea" class="txtarea" hidden>

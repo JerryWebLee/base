@@ -37,8 +37,10 @@ class MainCanvasRenderer extends CanvansRenderBase {
     this.bodyEffect();
     this.render();
     // 是否展示全部疼痛点
-    this.isShowAllHurtPoint = false
     this.checkedMuscle = null
+    this.showCurrentPointsArr = []
+    this.showFlag = false
+    this.showCurrenFlag = false
 
     this.showPointArr.forEach((obj) => {
       obj.hurtObj.bloomObj.layers.toggle(BLOOM_SCENE);
@@ -49,6 +51,9 @@ class MainCanvasRenderer extends CanvansRenderBase {
     window.onresize = function () {
       if (this.showFlag) {
         this.showPointsTest()
+      }
+      if (this.showCurrenFlag) {
+        this.showCurrentPointsTest(this.showCurrentPointsArr)
       }
       this.camera.aspect = this.canvas.offsetWidth / this.canvas.offsetHeight;
       this.camera.updateProjectionMatrix();
@@ -82,11 +87,10 @@ class MainCanvasRenderer extends CanvansRenderBase {
     let muscleArr = [];
     let showPointArr = [];
     let hurtPointArr = [];
-    let hightLightArr = [];
+    let highLightArr = [];
     this.muscleContainer = []
     this.muscleContainer.indexArr = []
-    this.showFlag = false
-
+    this.hurtMuscleArr = []
     // 遍历组中的对象属性
     this.body.traverse((obj) => {
       // console.log(obj);
@@ -96,7 +100,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
       let type = obj.name.split('_')[0];
       if (type == 'Skin') {
         skinArr.push(obj);
-        hightLightArr.push(obj);
+        highLightArr.push(obj);
         obj.material.side = THREE.DoubleSide;
         return;
       }
@@ -140,7 +144,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
           // opacity: 1
         })
 
-        hightLightArr.push(obj);
+        highLightArr.push(obj);
         muscleArr[obj.index] = obj;
 
         if (obj.index.match('B'))
@@ -148,23 +152,24 @@ class MainCanvasRenderer extends CanvansRenderBase {
         return;
       }
     })
-
     this.boxArr = boxArr;
     this.boneArr = boneArr;
     this.skinArr = skinArr;
     this.muscleArr = muscleArr;
-    this.highLightToogle = new highLightToogle(hightLightArr);
+    this.highLightToogle = new highLightToogle(highLightArr);
     // console.log('肌肉信息:');
     // console.log(this.muscleArr);
 
     this.initUI()
+    // console.log(hurtPointArr);
     // 疼痛点图标初始化
     this.showPointArr = [];
     for (let i = 1; i < showPointArr.length; i++) {
       if (showPointArr[i]) {
         let point = new showPoint(showPointArr[i], hurtPointArr[i], this, this.canvas, this.camera);
         this.showPointArr.push(point);
-        point.initMuscleArr(muscleArr);
+        let hurtMuscle = point.initMuscleArr(muscleArr)[0];
+        this.hurtMuscleArr.push(hurtMuscle)
       }
     }
     this.hideArr = [];
@@ -175,14 +180,75 @@ class MainCanvasRenderer extends CanvansRenderBase {
     let restartButton = document.getElementById('restartButton');
     let allHurtPointShow = document.getElementById('allShow');
     let allHurtPointHidden = document.getElementById('allHidden');
+    let currentShow = document.getElementById('currentShow')
+    let currenHidden = document.getElementById('currenHidden')
 
     disableButton.addEventListener('click', this.onDisableBtnClick.bind(this));
     undoButton.addEventListener('click', this.onUndoBtnClick.bind(this));
     restartButton.addEventListener('click', this.onRestartBtnClick.bind(this));
     allHurtPointShow.addEventListener('click', this.onShowPointClick.bind(this));
     allHurtPointHidden.addEventListener('click', this.onHidePointClick.bind(this));
+    currentShow && currentShow.addEventListener('click', this.onCurrentShowClick.bind(this));
+    currenHidden && currenHidden.addEventListener('click', this.onCurrenHiddenClick.bind(this));
 
     this.showPoints_HideAll();
+  }
+  onCurrentShowClick(e) {
+    this.doAdd = true
+    this.currentPointArr()
+    this.showCurrentPointsTest(this.showCurrentPointsArr)
+    this.showCurrenFlag = true
+  }
+  onCurrenHiddenClick(e) {
+    this.doAdd = false
+    this.currentPointArr()
+    if (this.showCurrentPointsArr.length === 0) {
+      this.showCurrenFlag = false
+    }
+  }
+  currentPointArr() {
+    let currentMuscle = this.checkedMuscle.clone()
+    if (this.doAdd) {
+      if (currentMuscle) {
+        let flag = this.showCurrentPointsArr.find((point) => {
+          return point.muscleArr[0].name === currentMuscle.name
+        })
+        if (flag) {
+          return
+        }
+        this.showPointArr.forEach(point => {
+          if (currentMuscle.name === point.muscleArr[0].name
+            && this.showPointVisibleTest(point.obj)) {
+            this.showCurrentPointsArr.push(point)
+          }
+        })
+      }
+    } else {
+      if (currentMuscle && this.showCurrentPointsArr.length > 0) {
+        let index = this.showCurrentPointsArr.findIndex((point) => {
+          return point.muscleArr[0].name === currentMuscle.name
+        })
+        if (index >= 0) {
+          this.showCurrentPointsArr[index].hide()
+          this.showCurrentPointsArr.splice(index, 1)
+        }
+      }
+    }
+  }
+  showCurrentPointsTest(showCurrentPointsArr) {
+    console.log(showCurrentPointsArr);
+    if (showCurrentPointsArr) {
+      showCurrentPointsArr.forEach((point) => {
+        if (this.showPointVisibleTest(point.obj)) {
+          point.show();
+        }
+        else {
+          // console.log(222)
+          point.hide();
+        }
+        point.updataImagePos()
+      })
+    }
   }
   onShowPointClick(e) {
     if (this.skinArr.length > 0) {
@@ -204,6 +270,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
       this.hideMuscleArr.push(this.highLightToogle.currentElement.obj);
       this.highLightToogle.currentElement.obj.visible = false;
       this.highLightToogle.unLightAll();
+      this.UI.hideUI()
       this.renderTreeUI(this.uiData)
     }
   }
@@ -211,8 +278,10 @@ class MainCanvasRenderer extends CanvansRenderBase {
   onUndoBtnClick(e) {
     if (this.hideMuscleArr && this.hideMuscleArr.length > 0) {
       const obj = this.hideMuscleArr.pop();
-      this.muscleHightLightToogle(obj)
+      let classIndex = obj.name.split('_')[0] - 1
+      this.muscleHighLightToogle(obj)
       this.highLightToogle.toogle(obj.name);
+      this.UI.showUI(obj, classIndex)
       obj.visible = true;
     }
   }
@@ -229,6 +298,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
     this.camera.position.set(0.0, 1.0, 3.0);
     this.controls.target.set(0.0, 1.0, 0.0);
     this.showPoints_HideAll()
+    this.UI.hideUI()
     this.uiData.forEach(item => { item.spread = false })
     this.renderTreeUI(this.uiData)
   }
@@ -267,6 +337,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
       checked: false,
       mulID: ''
     }
+    this.UI = new UI(this.hurtMuscleArr)
   }
   // tree父级
   createFirstElement() {
@@ -350,19 +421,23 @@ class MainCanvasRenderer extends CanvansRenderBase {
   stateChange(obj) {
     const muscle = this.muscleArr[obj.data.mulID]
     this.moveCamera2Target(muscle)
-    this.skinArr.forEach((skin) => { skin.visible = !this.checked })
+    this.skinArr.forEach((skin) => { skin.visible = false })
     this.checkObj.checked = this.checked
     this.checkObj.mulID = obj.data.mulID
+    let index = obj.data.mulID.split('_')[0] - 1
     if (this.checkObj.checked) {
       this.highLightToogle.toogle(muscle.name)
       this.checkedMuscle = muscle
+      this.UI.showUI(muscle, index)
     } else {
       this.highLightToogle.unLightAll()
       this.showPoints_HideAll()
       this.showFlag = false
       this.checkedMuscle = null
+      this.UI.hideUI()
     }
   }
+
   // 重载layui树
   reloadTreeUI(index, classIndex) {
     if (!this.uiTree) {
@@ -372,9 +447,13 @@ class MainCanvasRenderer extends CanvansRenderBase {
       this.uiData[i].spread = false;
     }
     this.uiData[classIndex].spread = true;
+    this.uiData.forEach((data) => {
+      if (data.id === index) {
+        data.checked = true
+      }
+    })
     this.tree.reload('mainTree', { data: this.uiData });
     this.uiTree.setChecked('mainTree', index);
-    console.log('reload')
   }
 
   // 事件绑定
@@ -429,6 +508,9 @@ class MainCanvasRenderer extends CanvansRenderBase {
       if (this.showFlag) {
         this.showPointsTest()
       }
+      if (this.showCurrenFlag) {
+        this.showCurrentPointsTest(this.showCurrentPointsArr)
+      }
     }
   }
   // 鼠标滚动时,根据模型更新图标点的位置
@@ -437,6 +519,10 @@ class MainCanvasRenderer extends CanvansRenderBase {
     if (this.showFlag) {
       this.showPointsTest()
     }
+    if (this.showCurrenFlag) {
+      this.showCurrentPointsTest(this.showCurrentPointsArr)
+    }
+
   }
 
   onMouseClick(e) {
@@ -447,11 +533,11 @@ class MainCanvasRenderer extends CanvansRenderBase {
     // 点击肌肉高亮显示
     this.clickTimer = setTimeout(function () {
       let obj = this.getMouseTarget();
-      this.muscleHightLightToogle(obj)
+      this.muscleHighLightToogle(obj)
     }.bind(this), 300);
   }
   // 肌肉高亮显示切换,且更新layui tree
-  muscleHightLightToogle(obj) {
+  muscleHighLightToogle(obj) {
     if (obj && !obj.name.match('Skin')) {
       // 解析点击的肌肉信息
       let mulID = obj.name.split('_')
@@ -466,7 +552,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
         // 移动相机,肌肉高亮
         this.moveCamera2Target(obj);
         this.checkedMuscle = obj
-        this.highLightToogle.toogle(obj.name)
+        // this.checked = true
         if (this.uiData) {
           dataArr = this.uiData[classIndex].children
         }
@@ -477,11 +563,13 @@ class MainCanvasRenderer extends CanvansRenderBase {
         })
         this.reloadTreeUI(newObj.id, newObj.class)
       } else {
+        // this.checked = false
         this.checkedMuscle = null
         // 取消高亮
         // this.uiData[classIndex].spread = false;
         this.highLightToogle.unLightAll();
         this.renderTreeUI(this.uiData)
+        this.UI.hideUI()
         this.mulID = -1
       }
     }
@@ -496,9 +584,9 @@ class MainCanvasRenderer extends CanvansRenderBase {
         // console.log(obj.name);
         obj.visible = false;
       }
-      obj.material.opacity = 0.7
-      obj.material.opacity = 1
-      obj.material.transparent = true;
+      // obj.material.opacity = 0.7
+      // obj.material.opacity = 1
+      // obj.material.transparent = true;
       if (!this.hideMuscleArr) {
         this.hideMuscleArr = [];
       }
@@ -507,19 +595,21 @@ class MainCanvasRenderer extends CanvansRenderBase {
       }
       obj.visible = false;
       this.renderTreeUI(this.uiData)
+      this.highLightToogle.unLightAll()
+      this.UI.hideUI()
       if (this.showFlag) {
         this.showPointsTest()
+      }
+      if (this.showCurrenFlag) {
+        this.showCurrentPointsTest(this.showCurrentPointsArr)
       }
     }
     // console.log('dbclick');
   }
-  // 图标点的显示隐藏
+  // 图标点的显示/隐藏
   showPointsTest() {
-    // console.log(this.showPointArr);
     this.showPointArr.forEach((point) => {
-
       if (this.showPointVisibleTest(point.obj)) {
-        // console.log(1111)
         point.show();
       }
       else {
@@ -563,6 +653,10 @@ class MainCanvasRenderer extends CanvansRenderBase {
     if (this.showFlag) {
       this.showPointsTest()
     }
+    if (this.showCurrenFlag) {
+      this.showCurrentPointsTest(this.showCurrentPointsArr)
+    }
+
     // console.log(this.camera);
     let dir = this.camera.position.clone();
     dir.sub(targetV);
@@ -603,6 +697,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
       if (this.showFlag) {
         this.showPointsTest()
       }
+      this.showCurrentPointsTest(this.showCurrentPointsArr)
     }
   }
 
@@ -722,9 +817,7 @@ class highLightToogle {
     }
     this.elementArr = elementArr;
 
-    this.txtarea = document.getElementById('txtarea');
-    this.cNameTxt = document.getElementById('nameTxt');
-    this.bodyClassNameTxt = document.getElementById('bodyClassNameTxt')
+
   }
   // 鼠标状态默认为空
   toogle(name, mouseState = null) {
@@ -740,13 +833,6 @@ class highLightToogle {
       this.currentElement = this.elementArr[name];
       this.currentElement.highLight();
     }
-    let index
-    if (this.currentElement.obj.index) {
-      index = this.currentElement.obj.index.split('_')[0] - 1
-    }
-    this.cNameTxt.innerText = this.currentElement.obj.cName;
-    this.bodyClassNameTxt.innerText = muscleClassNameArr[index]
-    this.txtarea.hidden = false
   }
 
   unLightAll() {
@@ -754,7 +840,7 @@ class highLightToogle {
       this.currentElement.unLight();
     }
     this.currentElement = null;
-    this.txtarea.hidden = true;
+
   }
 }
 
@@ -767,7 +853,6 @@ class highLightToogleElement {
     // highLightMat.color=new THREE.Color(0xff5555);
     this.highLightMat = highLightMat
     this.cName = obj.cName;
-
   }
 
   highLight() {
@@ -807,7 +892,6 @@ class showPoint_base {
     this.image.height = this.baseSize[1];
 
     this.obj = obj;
-
     // this.parent = obj.parent;
 
     this.canvas = canvas;
@@ -829,7 +913,6 @@ class showPoint_base {
   cal_pos(obj, camera, canvas) {
     // console.log(obj,camera,canvas)
     let v3 = obj.localToWorld(new THREE.Vector3(0, 0, 0));
-
     let v2 = v3.project(camera);
     // console.log(this.image.width)  
     let left = (v2.x + 1) * 0.5 * canvas.offsetWidth
@@ -866,9 +949,6 @@ class showPoint_base {
   onMouseOver(e) {
     this.image.width = this.bigSize[0];
     this.image.height = this.bigSize[1];
-    // if (this.parent.highLightManager) {
-    //     this.parent.highLightManager.unLightAll();
-    // }
   }
   onMouseOut(e) {
     this.image.width = this.baseSize[0];
@@ -896,28 +976,24 @@ class showPoint extends showPoint_base {
     // this.hurtObj.bloomObj.visible=false;
     this.manager = manager;
     this.creatEvent();
-
   }
 
   // 疼痛点肌肉
   initMuscleArr(muscleArr) {
     let muscleIndexArr = (this.hurtObj.name.slice(15)).split('*');
     this.muscleArr = [];
-
+    // console.log(muscleIndexArr);
     for (let i = 0; i < muscleIndexArr.length; i++) {
-      if (muscleIndexArr[i].match('A') || muscleIndexArr[i].match('B')) {
-        // console.log(muscleArr[muscleIndexArr[i]])
-        // console.log(muscleIndexArr[i]);
-        // 只添加其中一个
-        this.muscleArr.push(muscleArr[muscleIndexArr[i]])
-      }
       if (muscleArr[muscleIndexArr[i]]) {
+        if (muscleIndexArr[i].match('B')) {
+          continue
+        }
         this.muscleArr.push(muscleArr[muscleIndexArr[i]])
       }
     }
     this.oldMat = this.muscleArr[0].material;
     this.newMat = this.muscleArr[0].material.clone();
-
+    // console.log(this.muscleArr);
     let channelIndex = 0.0;
     let channelInName = this.hurtObj.name.split('*')[1];
     if (channelInName == 'G' || channelInName == 'g')
@@ -938,12 +1014,12 @@ class showPoint extends showPoint_base {
       defines: {
         USE_COLOR: true
       }
-
     })
-
     this.newMat.transparent = true;
     this.newMat.opacity = 0.7;
     // this.newMat.opacity = 1;
+
+    return this.muscleArr
   }
 
 
@@ -957,7 +1033,7 @@ class showPoint extends showPoint_base {
   onMouseOver(e) {
     super.onMouseOver(e);
     if (this.manager.checkedMuscle) {
-      this.manager.muscleHightLightToogle(this.manager.checkedMuscle)
+      this.manager.muscleHighLightToogle(this.manager.checkedMuscle)
     }
 
   }
@@ -1003,8 +1079,28 @@ class showPoint extends showPoint_base {
 }
 
 class UI {
-  constructor() {
+  constructor(hurtMuscleArr) {
 
+    this.hurtMuscleArr = hurtMuscleArr
+    this.txtarea = document.getElementById('txtarea');
+    this.cNameTxt = document.getElementById('nameTxt');
+    this.bodyClassNameTxt = document.getElementById('bodyClassNameTxt')
+    this.hurtPoint = document.getElementById('hurtPoint');
+  }
+  showUI(obj, index) {
+    let showFlag = true
+    this.cNameTxt.innerText = obj.cName;
+    this.bodyClassNameTxt.innerText = muscleClassNameArr[index]
+    this.txtarea.hidden = false
+    this.hurtMuscleArr.forEach((hurtMuscle) => {
+      if (obj.name === hurtMuscle.name) {
+        showFlag = false
+      }
+    })
+    this.hurtPoint.hidden = showFlag
+  }
+  hideUI() {
+    this.txtarea.hidden = true;
   }
 }
 

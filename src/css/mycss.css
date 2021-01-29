@@ -110,6 +110,17 @@
 .el-card__body {
   padding: 20px;
 }
+.muscleInfoContainer {
+  margin: 10px;
+  margin-left: 0;
+}
+.inline {
+  display: inline-block;
+}
+#hurtPointList {
+  margin-left: 10px;
+  font-weight: normal;
+}
 
 * {
   margin: 0;
