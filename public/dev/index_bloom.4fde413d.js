@@ -47343,8 +47343,6 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
     value: function showCurrentPointsTest(showCurrentPointsArr) {
       var _this3 = this;
 
-      console.log(showCurrentPointsArr);
-
       if (showCurrentPointsArr) {
         showCurrentPointsArr.forEach(function (point) {
           if (_this3.showPointVisibleTest(point.obj)) {
@@ -47375,6 +47373,9 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
     value: function onHidePointClick(e) {
       this.showPoints_HideAll();
       this.showFlag = false;
+      this.showPointArr.forEach(function (item) {
+        item.bloomDisable();
+      });
     } // 隐藏肌肉
 
   }, {
@@ -47422,28 +47423,15 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
       this.controls.target.set(0.0, 1.0, 0.0);
       this.showPoints_HideAll();
       this.UI.hideUI();
+      this.showPoints_HideAll();
+      this.showFlag = false;
       this.uiData.forEach(function (item) {
         item.spread = false;
       });
       this.renderTreeUI(this.uiData);
-    } // 模型复位 待用
-
-  }, {
-    key: "restartClick",
-    value: function restartClick() {
-      while (this.hideArr.length > 0) {
-        var obj = this.hideArr.pop();
-        obj.visible = true;
-
-        if (obj.showPoint) {
-          obj.showPoint.visible = true;
-          obj.showPoint.hide();
-        }
-      }
-
-      this.showPoints_HideAll();
-      this.camera.position.set(0.0, 1.0, 3.0);
-      this.controls.target.set(0, 1, 0);
+      this.showPointArr.forEach(function (item) {
+        item.bloomDisable();
+      });
     }
   }, {
     key: "initMuscle",
@@ -47702,49 +47690,57 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
       this.clickTimer = setTimeout(function () {
         var obj = this.getMouseTarget();
         this.muscleHighLightToogle(obj);
-      }.bind(this), 300);
+      }.bind(this), 30);
     } // 肌肉高亮显示切换,且更新layui tree
 
   }, {
     key: "muscleHighLightToogle",
     value: function muscleHighLightToogle(obj) {
       if (obj && !obj.name.match('Skin')) {
-        // 解析点击的肌肉信息
-        var mulID = obj.name.split('_');
-        var classIndex = +mulID[0];
-        var dataArr;
-        var newObj = null;
-        classIndex -= 1;
-        mulID.pop();
-        mulID = mulID.join('_');
-
-        if (this.mulID !== mulID) {
-          this.mulID = mulID; // 移动相机,肌肉高亮
-
-          this.moveCamera2Target(obj);
-          this.checkedMuscle = obj; // this.checked = true
-
-          if (this.uiData) {
-            dataArr = this.uiData[classIndex].children;
-          }
-
-          dataArr.forEach(function (item) {
-            if (item.mulID === mulID) {
-              newObj = item;
-            }
-          });
-          this.reloadTreeUI(newObj.id, newObj.class);
+        if (this.obj !== obj) {
+          this.showCurrentMuscleUI(obj);
+          this.obj = obj;
         } else {
-          // this.checked = false
-          this.checkedMuscle = null; // 取消高亮
-          // this.uiData[classIndex].spread = false;
-
-          this.highLightToogle.unLightAll();
-          this.renderTreeUI(this.uiData);
-          this.UI.hideUI();
-          this.mulID = -1;
+          this.hideCurrentMuscleUI();
+          this.obj = null;
         }
       }
+    }
+  }, {
+    key: "hideCurrentMuscleUI",
+    value: function hideCurrentMuscleUI() {
+      // this.checked = false
+      this.checkedMuscle = null; // 取消高亮
+      // this.uiData[classIndex].spread = false;
+
+      this.highLightToogle.unLightAll();
+      this.renderTreeUI(this.uiData);
+      this.UI.hideUI();
+    }
+  }, {
+    key: "showCurrentMuscleUI",
+    value: function showCurrentMuscleUI(obj) {
+      // 解析点击的肌肉信息
+      var mulID = obj.name.split('_');
+      var classIndex = mulID[0] - 1;
+      var dataArr;
+      var newObj = null;
+      mulID.pop();
+      mulID = mulID.join('_'); // 移动相机,肌肉高亮
+
+      this.moveCamera2Target(obj);
+      this.checkedMuscle = obj;
+
+      if (this.uiData) {
+        dataArr = this.uiData[classIndex].children;
+      }
+
+      dataArr.forEach(function (item) {
+        if (item.mulID === mulID) {
+          newObj = item;
+        }
+      });
+      this.reloadTreeUI(newObj.id, newObj.class);
     } // 双击皮肤和肌肉的隐藏
 
   }, {
@@ -48271,6 +48267,9 @@ var showPoint = /*#__PURE__*/function (_showPoint_base) {
 
       if (this.manager.checkedMuscle) {
         this.manager.muscleHighLightToogle(this.manager.checkedMuscle);
+        var muscleIndex = this.hurtObj.name.split('*')[this.hurtObj.name.split('*').length - 1];
+        var muscle = this.manager.muscleArr[muscleIndex];
+        this.manager.showCurrentMuscleUI(muscle);
       }
     }
   }, {
@@ -48287,34 +48286,51 @@ var showPoint = /*#__PURE__*/function (_showPoint_base) {
   }, {
     key: "bloomToogle",
     value: function bloomToogle() {
-      var _this7 = this;
-
       this.hurtObj.bloomObj.layers.toggle(BLOOM_SCENE);
+      var muscleIndex = this.hurtObj.name.split('*')[this.hurtObj.name.split('*').length - 1];
+      var muscle = this.manager.muscleArr[muscleIndex];
 
       if (this.hurtObj.bloomObj.layers.test(bloomLayer)) {
-        // console.log("bloomOBj is in bloom layer")
-        this.hurtObj.visible = true;
-        this.hurtObj.bloomObj.visible = true;
-        this.manager.moveCamera2Target(this.hurtObj);
-        this.muscleArr.forEach(function (obj) {
-          // console.log(obj)
-          obj.material = _this7.newMat;
-          obj.renderOrder = 1;
-          obj.highLightAble = false;
-          obj.visible = true;
-          obj.renderOrder = 1;
-        });
+        this.bloomEnable();
+        this.manager.showCurrentMuscleUI(muscle);
       } else {
         // console.log("bloomOBj is in not bloom layer")
-        this.hurtObj.visible = false;
-        this.hurtObj.bloomObj.visible = false;
-        this.muscleArr.forEach(function (obj) {
-          obj.material = _this7.oldMat;
-          obj.renderOrder = 0;
-          obj.highLightAble = true;
-          obj.renderOrder = 10;
-        });
+        this.bloomDisable();
+        this.manager.renderTreeUI(this.manager.uiData);
+        this.manager.UI.hideUI();
       }
+    }
+  }, {
+    key: "bloomEnable",
+    value: function bloomEnable() {
+      var _this7 = this;
+
+      // console.log("bloomOBj is in bloom layer")
+      this.hurtObj.visible = true;
+      this.hurtObj.bloomObj.visible = true;
+      this.manager.moveCamera2Target(this.hurtObj);
+      this.muscleArr.forEach(function (obj) {
+        // console.log(obj)
+        obj.material = _this7.newMat;
+        obj.renderOrder = 1;
+        obj.highLightAble = false;
+        obj.visible = true;
+        obj.renderOrder = 1;
+      });
+    }
+  }, {
+    key: "bloomDisable",
+    value: function bloomDisable() {
+      var _this8 = this;
+
+      this.hurtObj.visible = false;
+      this.hurtObj.bloomObj.visible = false;
+      this.muscleArr.forEach(function (obj) {
+        obj.material = _this8.oldMat;
+        obj.renderOrder = 0;
+        obj.highLightAble = true;
+        obj.renderOrder = 10;
+      });
     }
   }, {
     key: "onDblClick",

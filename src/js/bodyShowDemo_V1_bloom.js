@@ -236,7 +236,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
     }
   }
   showCurrentPointsTest(showCurrentPointsArr) {
-    console.log(showCurrentPointsArr);
     if (showCurrentPointsArr) {
       showCurrentPointsArr.forEach((point) => {
         if (this.showPointVisibleTest(point.obj)) {
@@ -260,6 +259,9 @@ class MainCanvasRenderer extends CanvansRenderBase {
   onHidePointClick(e) {
     this.showPoints_HideAll()
     this.showFlag = false
+    this.showPointArr.forEach((item) => {
+      item.bloomDisable()
+    })
   }
   // 隐藏肌肉
   onDisableBtnClick(e) {
@@ -299,23 +301,13 @@ class MainCanvasRenderer extends CanvansRenderBase {
     this.controls.target.set(0.0, 1.0, 0.0);
     this.showPoints_HideAll()
     this.UI.hideUI()
+    this.showPoints_HideAll()
+    this.showFlag = false
     this.uiData.forEach(item => { item.spread = false })
     this.renderTreeUI(this.uiData)
-  }
-
-  // 模型复位 待用
-  restartClick() {
-    while (this.hideArr.length > 0) {
-      let obj = this.hideArr.pop();
-      obj.visible = true;
-      if (obj.showPoint) {
-        obj.showPoint.visible = true;
-        obj.showPoint.hide();
-      }
-    }
-    this.showPoints_HideAll();
-    this.camera.position.set(0.0, 1.0, 3.0);
-    this.controls.target.set(0, 1, 0);
+    this.showPointArr.forEach((item) => {
+      item.bloomDisable()
+    })
   }
 
   initMuscle(obj) {
@@ -527,6 +519,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
 
   onMouseClick(e) {
     // 单击移动camera2镜头
+
     if (this.didDrag)
       return;
     clearInterval(this.clickTimer);
@@ -534,46 +527,54 @@ class MainCanvasRenderer extends CanvansRenderBase {
     this.clickTimer = setTimeout(function () {
       let obj = this.getMouseTarget();
       this.muscleHighLightToogle(obj)
-    }.bind(this), 300);
+    }.bind(this), 30);
+
   }
   // 肌肉高亮显示切换,且更新layui tree
   muscleHighLightToogle(obj) {
     if (obj && !obj.name.match('Skin')) {
-      // 解析点击的肌肉信息
-      let mulID = obj.name.split('_')
-      let classIndex = +mulID[0]
-      let dataArr
-      let newObj = null
-      classIndex -= 1
-      mulID.pop()
-      mulID = mulID.join('_')
-      if (this.mulID !== mulID) {
-        this.mulID = mulID
-        // 移动相机,肌肉高亮
-        this.moveCamera2Target(obj);
-        this.checkedMuscle = obj
-        // this.checked = true
-        if (this.uiData) {
-          dataArr = this.uiData[classIndex].children
-        }
-        dataArr.forEach((item) => {
-          if (item.mulID === mulID) {
-            newObj = item
-          }
-        })
-        this.reloadTreeUI(newObj.id, newObj.class)
+      if (this.obj !== obj) {
+        this.showCurrentMuscleUI(obj)
+        this.obj = obj
       } else {
-        // this.checked = false
-        this.checkedMuscle = null
-        // 取消高亮
-        // this.uiData[classIndex].spread = false;
-        this.highLightToogle.unLightAll();
-        this.renderTreeUI(this.uiData)
-        this.UI.hideUI()
-        this.mulID = -1
+        this.hideCurrentMuscleUI()
+        this.obj = null
       }
     }
   }
+  hideCurrentMuscleUI() {
+    // this.checked = false
+    this.checkedMuscle = null
+    // 取消高亮
+    // this.uiData[classIndex].spread = false;
+    this.highLightToogle.unLightAll();
+    this.renderTreeUI(this.uiData)
+    this.UI.hideUI()
+  }
+
+  showCurrentMuscleUI(obj) {
+    // 解析点击的肌肉信息
+    let mulID = obj.name.split('_')
+    let classIndex = mulID[0] - 1
+    let dataArr
+    let newObj = null
+    mulID.pop()
+    mulID = mulID.join('_')
+
+    // 移动相机,肌肉高亮
+    this.moveCamera2Target(obj);
+    this.checkedMuscle = obj
+    if (this.uiData) {
+      dataArr = this.uiData[classIndex].children
+    }
+    dataArr.forEach((item) => {
+      if (item.mulID === mulID) {
+        newObj = item
+      }
+    })
+    this.reloadTreeUI(newObj.id, newObj.class)
+  }
+
   // 双击皮肤和肌肉的隐藏
   onMouseDBClick(e) {
     clearTimeout(this.clickTimer);
@@ -1034,6 +1035,9 @@ class showPoint extends showPoint_base {
     super.onMouseOver(e);
     if (this.manager.checkedMuscle) {
       this.manager.muscleHighLightToogle(this.manager.checkedMuscle)
+      let muscleIndex = this.hurtObj.name.split('*')[this.hurtObj.name.split('*').length - 1]
+      let muscle = this.manager.muscleArr[muscleIndex]
+      this.manager.showCurrentMuscleUI(muscle)
     }
 
   }
@@ -1043,34 +1047,46 @@ class showPoint extends showPoint_base {
   onClick(e) {
     // console.log(this.hurtObj.name);
     this.bloomToogle()
+
   }
   bloomToogle() {
     this.hurtObj.bloomObj.layers.toggle(BLOOM_SCENE);
+    let muscleIndex = this.hurtObj.name.split('*')[this.hurtObj.name.split('*').length - 1]
+    let muscle = this.manager.muscleArr[muscleIndex]
     if (this.hurtObj.bloomObj.layers.test(bloomLayer)) {
-      // console.log("bloomOBj is in bloom layer")
-      this.hurtObj.visible = true;
-      this.hurtObj.bloomObj.visible = true;
-      this.manager.moveCamera2Target(this.hurtObj);
-      this.muscleArr.forEach((obj) => {
-        // console.log(obj)
-        obj.material = this.newMat;
-        obj.renderOrder = 1;
-        obj.highLightAble = false;
-        obj.visible = true;
-        obj.renderOrder = 1;
-      })
+      this.bloomEnable()
+      this.manager.showCurrentMuscleUI(muscle)
     }
     else {
       // console.log("bloomOBj is in not bloom layer")
-      this.hurtObj.visible = false;
-      this.hurtObj.bloomObj.visible = false;
-      this.muscleArr.forEach((obj) => {
-        obj.material = this.oldMat;
-        obj.renderOrder = 0;
-        obj.highLightAble = true;
-        obj.renderOrder = 10;
-      })
+      this.bloomDisable()
+      this.manager.renderTreeUI(this.manager.uiData)
+      this.manager.UI.hideUI()
     }
+  }
+  bloomEnable() {
+    // console.log("bloomOBj is in bloom layer")
+    this.hurtObj.visible = true;
+    this.hurtObj.bloomObj.visible = true;
+    this.manager.moveCamera2Target(this.hurtObj);
+    this.muscleArr.forEach((obj) => {
+      // console.log(obj)
+      obj.material = this.newMat;
+      obj.renderOrder = 1;
+      obj.highLightAble = false;
+      obj.visible = true;
+      obj.renderOrder = 1;
+    })
+  }
+  bloomDisable() {
+    this.hurtObj.visible = false;
+    this.hurtObj.bloomObj.visible = false;
+    this.muscleArr.forEach((obj) => {
+      obj.material = this.oldMat;
+      obj.renderOrder = 0;
+      obj.highLightAble = true;
+      obj.renderOrder = 10;
+    })
   }
   onDblClick(e) {
 
