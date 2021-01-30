@@ -37,7 +37,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
     this.bodyEffect();
     this.render();
     // 是否展示全部疼痛点
-    this.checkedMuscle = null
+
     this.showCurrentPointsArr = []
     this.showFlag = false
     this.showCurrenFlag = false
@@ -91,6 +91,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
     this.muscleContainer = []
     this.muscleContainer.indexArr = []
     this.hurtMuscleArr = []
+    this.checkedMuscle = null
     // 遍历组中的对象属性
     this.body.traverse((obj) => {
       // console.log(obj);
@@ -173,7 +174,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
       }
     }
     this.hideArr = [];
-    // 肌肉操作
+    // 肌肉UI操作
     let disableButton = document.getElementById('disableButton');
     let undoButton = document.getElementById('undoButton');
     // let cancelButton = document.getElementById('cancelButton');
@@ -182,6 +183,10 @@ class MainCanvasRenderer extends CanvansRenderBase {
     let allHurtPointHidden = document.getElementById('allHidden');
     let currentShow = document.getElementById('currentShow')
     let currenHidden = document.getElementById('currenHidden')
+    let muscleStatusBtn = document.getElementById('muscleStatusBtn')
+    this.muscleStatusBtn = muscleStatusBtn
+
+
 
     disableButton.addEventListener('click', this.onDisableBtnClick.bind(this));
     undoButton.addEventListener('click', this.onUndoBtnClick.bind(this));
@@ -190,8 +195,31 @@ class MainCanvasRenderer extends CanvansRenderBase {
     allHurtPointHidden.addEventListener('click', this.onHidePointClick.bind(this));
     currentShow && currentShow.addEventListener('click', this.onCurrentShowClick.bind(this));
     currenHidden && currenHidden.addEventListener('click', this.onCurrenHiddenClick.bind(this));
+    this.muscleStatusBtn && this.changeMuscleStatus()
 
     this.showPoints_HideAll();
+  }
+  changeMuscleStatus() {
+    layui.use('form', function () {
+      let form = layui.form;
+      form.on('switch(toogleStatus)', function (data) {
+        if (this.checkedMuscle && this.showPointArr.length > 0) {
+          this.showPointArr.forEach((point) => {
+            if (point.muscleArr[0].name === this.checkedMuscle.name) {
+              this.point = point
+            }
+          })
+          if (data.elem.checked) {
+            this.point.bloomEnable()
+            this.checkedMuscle.changeStatus = true
+          } else {
+            this.point.bloomDisable()
+            this.checkedMuscle.changeStatus = false
+          }
+        }
+      }.bind(this));
+
+    }.bind(this));
   }
   onCurrentShowClick(e) {
     this.doAdd = true
@@ -262,6 +290,17 @@ class MainCanvasRenderer extends CanvansRenderBase {
     this.showPointArr.forEach((item) => {
       item.bloomDisable()
     })
+    this.hideBloomStatus()
+  }
+  hideBloomStatus() {
+    layui.use('form', function () {
+      let form = layui.form;
+      let muscleStatusBtn = document.getElementById('muscleStatusBtn')
+      if (muscleStatusBtn.checked) {
+        muscleStatusBtn.checked = false
+        form.render('checkbox')
+      }
+    })
   }
   // 隐藏肌肉
   onDisableBtnClick(e) {
@@ -308,6 +347,7 @@ class MainCanvasRenderer extends CanvansRenderBase {
     this.showPointArr.forEach((item) => {
       item.bloomDisable()
     })
+    this.hideBloomStatus()
   }
 
   initMuscle(obj) {
@@ -421,13 +461,23 @@ class MainCanvasRenderer extends CanvansRenderBase {
       this.highLightToogle.toogle(muscle.name)
       this.checkedMuscle = muscle
       this.UI.showUI(muscle, index)
+      this.reRenderMuscleStatusBtn(this.checkedMuscle)
     } else {
       this.highLightToogle.unLightAll()
-      this.showPoints_HideAll()
-      this.showFlag = false
       this.checkedMuscle = null
       this.UI.hideUI()
     }
+  }
+  // 更新渲染肌肉状态按钮
+  reRenderMuscleStatusBtn(checkedMuscle) {
+    layui.use('form', function () {
+      let form = layui.form;
+      let muscleStatusBtn = document.getElementById('muscleStatusBtn')
+      if (muscleStatusBtn) {
+        muscleStatusBtn.checked = checkedMuscle.changeStatus
+        form.render('checkbox')
+      }
+    }.bind(this))
   }
 
   // 重载layui树
@@ -464,26 +514,12 @@ class MainCanvasRenderer extends CanvansRenderBase {
   // 鼠标移动时,皮肤和肌肉高亮显示
   onMouseMove(e) {
     this.mouseState = e;
-    // console.log(this.mouseState);
     // 如果鼠标按下,开启拖拽事件
     if (this.mouseDown) {
-      // console.log('drag');
       this.dragChange = true
       this.didDrag = true;
       this.showPoints_HideAll();
     }
-    // 肌肉的高亮显示
-    // else {
-    //   let obj = this.getMouseTarget();
-    //   if (obj) {
-    //     console.log('肌肉高亮:');
-    //     console.log(obj);
-    //     this.highLightToogle.toogle(obj.name, this.mouseState);
-    //   }
-    //   else {
-    //     this.highLightToogle.unLightAll();
-    //   }
-    // }
   }
   // 鼠标按下事件,开始拖拽
   onMouseDown(e) {
@@ -519,7 +555,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
 
   onMouseClick(e) {
     // 单击移动camera2镜头
-
     if (this.didDrag)
       return;
     clearInterval(this.clickTimer);
@@ -1034,12 +1069,8 @@ class showPoint extends showPoint_base {
   onMouseOver(e) {
     super.onMouseOver(e);
     if (this.manager.checkedMuscle) {
-      this.manager.muscleHighLightToogle(this.manager.checkedMuscle)
-      let muscleIndex = this.hurtObj.name.split('*')[this.hurtObj.name.split('*').length - 1]
-      let muscle = this.manager.muscleArr[muscleIndex]
-      this.manager.showCurrentMuscleUI(muscle)
+      this.manager.highLightToogle.unLightAll()
     }
-
   }
   onMouseOut(e) {
     super.onMouseOut(e);
@@ -1047,22 +1078,21 @@ class showPoint extends showPoint_base {
   onClick(e) {
     // console.log(this.hurtObj.name);
     this.bloomToogle()
-
   }
   bloomToogle() {
     this.hurtObj.bloomObj.layers.toggle(BLOOM_SCENE);
     let muscleIndex = this.hurtObj.name.split('*')[this.hurtObj.name.split('*').length - 1]
     let muscle = this.manager.muscleArr[muscleIndex]
+    this.manager.showCurrentMuscleUI(muscle)
     if (this.hurtObj.bloomObj.layers.test(bloomLayer)) {
       this.bloomEnable()
-      this.manager.showCurrentMuscleUI(muscle)
+      this.manager.checkedMuscle.changeStatus = true
     }
     else {
-      // console.log("bloomOBj is in not bloom layer")
       this.bloomDisable()
-      this.manager.renderTreeUI(this.manager.uiData)
-      this.manager.UI.hideUI()
+      this.manager.checkedMuscle.changeStatus = false
     }
+    this.manager.reRenderMuscleStatusBtn(this.manager.checkedMuscle)
   }
   bloomEnable() {
     // console.log("bloomOBj is in bloom layer")
@@ -1102,6 +1132,7 @@ class UI {
     this.cNameTxt = document.getElementById('nameTxt');
     this.bodyClassNameTxt = document.getElementById('bodyClassNameTxt')
     this.hurtPoint = document.getElementById('hurtPoint');
+    this.muscleStatusBtn = document.getElementById('muscleStatusBtn')
   }
   showUI(obj, index) {
     let showFlag = true
@@ -1115,6 +1146,7 @@ class UI {
     })
     this.hurtPoint.hidden = showFlag
   }
+
   hideUI() {
     this.txtarea.hidden = true;
   }
