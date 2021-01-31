@@ -47363,7 +47363,17 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
           if (index >= 0) {
             this.showCurrentPointsArr[index].hide();
             this.showCurrentPointsArr.splice(index, 1);
-          }
+          } // if (this.showFlag) {
+          //   console.log(111);
+          //   let indexOfShowPointArr = this.showPointArr.findIndex((point) => {
+          //     return point.muscleArr[0].name === currentMuscle.name
+          //   })
+          //   if (indexOfShowPointArr >= 0) {
+          //     this.showPointArr.splice(index, 1)
+          //     this.showPointsTest()
+          //   }
+          // }
+
         }
       }
     }
@@ -47834,7 +47844,6 @@ var MainCanvasRenderer = /*#__PURE__*/function (_CanvansRenderBase) {
         if (_this6.showPointVisibleTest(point.obj)) {
           point.show();
         } else {
-          // console.log(222)
           point.hide();
         }
 

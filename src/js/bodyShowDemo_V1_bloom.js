@@ -186,8 +186,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
     let muscleStatusBtn = document.getElementById('muscleStatusBtn')
     this.muscleStatusBtn = muscleStatusBtn
 
-
-
     disableButton.addEventListener('click', this.onDisableBtnClick.bind(this));
     undoButton.addEventListener('click', this.onUndoBtnClick.bind(this));
     restartButton.addEventListener('click', this.onRestartBtnClick.bind(this));
@@ -260,6 +258,16 @@ class MainCanvasRenderer extends CanvansRenderBase {
           this.showCurrentPointsArr[index].hide()
           this.showCurrentPointsArr.splice(index, 1)
         }
+        // if (this.showFlag) {
+        //   console.log(111);
+        //   let indexOfShowPointArr = this.showPointArr.findIndex((point) => {
+        //     return point.muscleArr[0].name === currentMuscle.name
+        //   })
+        //   if (indexOfShowPointArr >= 0) {
+        //     this.showPointArr.splice(index, 1)
+        //     this.showPointsTest()
+        //   }
+        // }
       }
     }
   }
@@ -649,7 +657,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
         point.show();
       }
       else {
-        // console.log(222)
         point.hide();
       }
       point.updataImagePos()
