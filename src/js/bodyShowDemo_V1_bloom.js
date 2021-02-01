@@ -1,9 +1,6 @@
 import * as THREE from 'three/build/three.module';
-import axios from 'axios';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { CanvansRenderBase, MyClick } from './utils';
-// import { nameArr } from './name'
-// import { CanvansRenderBase } from './utils'
 // 该类管理了产生最终视觉效果的后期处理过程链。 后期处理过程根据它们添加/插入的顺序来执行，最后一个过程会被自动渲染到屏幕上。
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 // 渲染通道
@@ -11,7 +8,6 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
 // Bloom主要用来模拟生活中的泛光或说眩光效果,通过threejs后期处理的扩展库UnrealBloomPass通道可实现一个泛光效果。
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass';
-
 import { hurtMuscleEffectShader } from './shader'
 
 // 设置图层
@@ -180,19 +176,23 @@ class MainCanvasRenderer extends CanvansRenderBase {
     // let cancelButton = document.getElementById('cancelButton');
     let restartButton = document.getElementById('restartButton');
     let allHurtPointShow = document.getElementById('allShow');
+    this.allHurtPointShow = allHurtPointShow;
     let allHurtPointHidden = document.getElementById('allHidden');
-    let currentShow = document.getElementById('currentShow')
-    let currenHidden = document.getElementById('currenHidden')
-    let muscleStatusBtn = document.getElementById('muscleStatusBtn')
-    this.muscleStatusBtn = muscleStatusBtn
+    this.allHurtPointHidden = allHurtPointHidden;
+    let currentShow = document.getElementById('currentShow');
+    this.currentShow = currentShow
+    let currenHidden = document.getElementById('currenHidden');
+    this.currenHidden = currenHidden
+    let muscleStatusBtn = document.getElementById('muscleStatusBtn');
+    this.muscleStatusBtn = muscleStatusBtn;
 
     disableButton.addEventListener('click', this.onDisableBtnClick.bind(this));
     undoButton.addEventListener('click', this.onUndoBtnClick.bind(this));
     restartButton.addEventListener('click', this.onRestartBtnClick.bind(this));
-    allHurtPointShow.addEventListener('click', this.onShowPointClick.bind(this));
-    allHurtPointHidden.addEventListener('click', this.onHidePointClick.bind(this));
-    currentShow && currentShow.addEventListener('click', this.onCurrentShowClick.bind(this));
-    currenHidden && currenHidden.addEventListener('click', this.onCurrenHiddenClick.bind(this));
+    this.allHurtPointShow.addEventListener('click', this.onShowPointClick.bind(this));
+    this.allHurtPointHidden.addEventListener('click', this.onHidePointClick.bind(this));
+    this.currentShow && this.currentShow.addEventListener('click', this.onCurrentShowClick.bind(this));
+    this.currenHidden && this.currenHidden.addEventListener('click', this.onCurrenHiddenClick.bind(this));
     this.muscleStatusBtn && this.changeMuscleStatus()
 
     this.showPoints_HideAll();
@@ -224,6 +224,8 @@ class MainCanvasRenderer extends CanvansRenderBase {
     this.currentPointArr()
     this.showCurrentPointsTest(this.showCurrentPointsArr)
     this.showCurrenFlag = true
+    this.currentShow.hidden = true
+    this.currenHidden.hidden = false
   }
   onCurrenHiddenClick(e) {
     this.doAdd = false
@@ -231,6 +233,8 @@ class MainCanvasRenderer extends CanvansRenderBase {
     if (this.showCurrentPointsArr.length === 0) {
       this.showCurrenFlag = false
     }
+    this.currentShow.hidden = false
+    this.currenHidden.hidden = true
   }
   currentPointArr() {
     let currentMuscle = this.checkedMuscle.clone()
@@ -291,6 +295,8 @@ class MainCanvasRenderer extends CanvansRenderBase {
     }
     this.showPointsTest()
     this.showFlag = true
+    this.allHurtPointShow.hidden = true
+    this.allHurtPointHidden.hidden = false
   }
   onHidePointClick(e) {
     this.showPoints_HideAll()
@@ -299,6 +305,8 @@ class MainCanvasRenderer extends CanvansRenderBase {
       item.bloomDisable()
     })
     this.hideBloomStatus()
+    this.allHurtPointShow.hidden = false
+    this.allHurtPointHidden.hidden = true
   }
   hideBloomStatus() {
     layui.use('form', function () {
@@ -346,7 +354,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
     this.hideMuscleArr = [];
     this.camera.position.set(0.0, 1.0, 3.0);
     this.controls.target.set(0.0, 1.0, 0.0);
-    this.showPoints_HideAll()
     this.UI.hideUI()
     this.showPoints_HideAll()
     this.showFlag = false
@@ -373,10 +380,6 @@ class MainCanvasRenderer extends CanvansRenderBase {
     this.createSecondElement();
     this.renderTreeUI(this.uiData);
     this.checked = false;
-    this.checkObj = {
-      checked: false,
-      mulID: ''
-    }
     this.UI = new UI(this.hurtMuscleArr)
   }
   // tree父级
@@ -462,10 +465,8 @@ class MainCanvasRenderer extends CanvansRenderBase {
     const muscle = this.muscleArr[obj.data.mulID]
     this.moveCamera2Target(muscle)
     this.skinArr.forEach((skin) => { skin.visible = false })
-    this.checkObj.checked = this.checked
-    this.checkObj.mulID = obj.data.mulID
     let index = obj.data.mulID.split('_')[0] - 1
-    if (this.checkObj.checked) {
+    if (this.checked) {
       this.highLightToogle.toogle(muscle.name)
       this.checkedMuscle = muscle
       this.UI.showUI(muscle, index)
@@ -1133,12 +1134,11 @@ class showPoint extends showPoint_base {
 
 class UI {
   constructor(hurtMuscleArr) {
-
     this.hurtMuscleArr = hurtMuscleArr
     this.txtarea = document.getElementById('txtarea');
     this.cNameTxt = document.getElementById('nameTxt');
     this.bodyClassNameTxt = document.getElementById('bodyClassNameTxt')
-    this.hurtPoint = document.getElementById('hurtPoint');
+    this.hurtArea = document.getElementById('hurtArea');
     this.muscleStatusBtn = document.getElementById('muscleStatusBtn')
   }
   showUI(obj, index) {
@@ -1151,7 +1151,7 @@ class UI {
         showFlag = false
       }
     })
-    this.hurtPoint.hidden = showFlag
+    this.hurtArea.hidden = showFlag
   }
 
   hideUI() {
@@ -1220,8 +1220,3 @@ class clickObjBase {
 }
 
 exports.MainCanvasRenderer = MainCanvasRenderer;
-
-exports.showPoint = showPoint;
-
-
-

@@ -46,12 +46,13 @@
           <div id="modelSetContainer">
             <div id="showAllHurtPoint">
               <div class="line"></div>
-              <div id="isShowAllHurtPointBtn">显示/隐藏所有疼痛点</div>
+              <div id="isShowAllHurtPointBtn">显示/隐藏所有疼痛点图标:</div>
               <div class="line"></div>
               <div id="btnContainer">
                 <div class="innerBtnContainer">
+                  <div class="hoverStyle"></div>
                   <image id="allShow" src="../resource/allShow.png" class="button"></image>
-                  <image id="allHidden" src="../resource/allHidden.png" class="button"></image>
+                  <image id="allHidden" src="../resource/allHidden.png" class="button" hidden></image>
                 </div>
               </div>
             </div>
@@ -60,68 +61,41 @@
         <!-- 肌肉名 -->
         <div id="txtarea" class="muscle txtarea" hidden>
           <div class="el-card__header">
-            <div id="muscleName">
-              <span id="name">当前肌肉名称:</span>
-              <span id="nameTxt"></span>
+            <div id="muscleName" class="selfHeight">
+              <span id="name" class="fontStyle">当 前 肌 肉 名 称:</span>
+              <span id="nameTxt" class="selfStyle leftMargin"></span>
             </div>
           </div>
-          <div class="el-card__body">
-            <div id="bodyClass" class="muscleInfoContainer">
-              <span id="bodyClassName">所属身体部分:</span>
-              <span id="bodyClassNameTxt"></span>
-            </div>
-            <!-- 有疼痛点的肌肉显示疼痛点按钮 -->
-            <div id="hurtPoint" class="muscleInfoContainer" hidden>
-              <div id="showCurrentHurtPoint">
-                <div id="isShowCurrentPoint" class="inline">显示/隐藏当前肌肉疼痛点图标:</div>
-                <div class="inline">
-                  <image id="currentShow" src="../resource/allShow.png" class="button"></image>
-                  <image id="currenHidden" src="../resource/allHidden.png" class="button"></image>
-                </div>
-              </div>
-              <div class="layui-form" lay-filter="test">
-                <span>当前肌肉状态切换：</span>
-                <input
-                  id="muscleStatusBtn"
-                  class="layui-form-item"
-                  class="muscleStatusBtn"
-                  lay-filter="toogleStatus"
-                  type="checkbox"
-                  name="muscleStatus"
-                  lay-skin="switch"
-                  lay-text="损伤状态|健康状态"
-                />
-              </div>
-              <div class="muscleInfoContainer">
-                <span>当前肌肉疼痛点信息</span>
-                <ul id="hurtPointList">
-                  <li>疼痛点1</li>
-                  <li>疼痛点2</li>
-                  <li>疼痛点3</li>
-                  <li>疼痛点4</li>
-                </ul>
-              </div>
-            </div>
-            <div id="hurttxtarea" class="txtarea" hidden>
-              <div id="hurtPointList">
-                <ul>
-                  <li>疼痛</li>
-                </ul>
-              </div>
-              <div>
-                <div id="reason">成因</div>
-                <span></span>
-              </div>
-              <div>
-                <div id="solution">手法</div>
-                <span></span>
-              </div>
-              <div id="status">
-                <button id="healthStatus">正常状态</button>
-                <button id="painStatus">疼痛状态</button>
-              </div>
+          <div class="el-card__header">
+            <div id="bodyClass" class="selfHeight">
+              <span id="bodyClassName" class="fontStyle">所 属 身 体 部 分:</span>
+              <span id="bodyClassNameTxt" class="selfStyle leftMargin"></span>
             </div>
           </div>
+          <!-- 有疼痛点的肌肉显示疼痛点按钮 -->
+          <ul id="hurtArea" hidden>
+            <li id="isShowHurtIcon" class="el-card__header">
+              <span class="fontStyle">显 示 / 隐 藏 肌 肉 疼 痛 点 图 标:</span>
+              <div class="innerBtnContainer leftMarginIcon">
+                <div class="hoverStyle"></div>
+                <image id="currentShow" src="../resource/allShow.png" class="button btnCenter"></image>
+                <image id="currenHidden" src="../resource/allHidden.png" class="button btnCenter" hidden></image>
+              </div>
+            </li>
+            <li id="toogleMulStat" class="layui-form selfHeight el-card__header">
+              <span class="fontStyle">肌 肉 状 态 切 换:</span>
+              <input id="muscleStatusBtn" class="layui-form-item leftMargin" lay-filter="toogleStatus" type="checkbox" name="muscleStatus" lay-skin="switch" lay-text="损伤状态|健康状态" />
+            </li>
+            <li id="mulHurtPoints" class="selfHeight el-card__header">
+              <span class="fontStyle">肌 肉 疼 痛 点:</span>
+              <ul id="hurtPointList">
+                <li>疼痛点1</li>
+                <li>疼痛点2</li>
+                <li>疼痛点3</li>
+                <li>疼痛点4</li>
+              </ul>
+            </li>
+          </ul>
         </div>
       </div>
       <canvas id="mainCanvas" class="myCavnas" style="z-index: 0"></canvas>
@@ -136,7 +110,7 @@
     </div>
 
     <script type="x-shader/x-vertex" id="vertexshader">
-         varying vec2 vUv;
+      varying vec2 vUv;
       void main() {
       	vUv = uv;
       	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );

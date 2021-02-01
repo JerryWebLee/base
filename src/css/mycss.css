@@ -31,7 +31,7 @@
   line-height: 50px;
 }
 #modelSetArea .modelSetTxt {
-  font-weight: 600;
+  font-weight: bold;
   margin-right: 10px;
 }
 #showAllHurtPoint {
@@ -52,15 +52,38 @@
   margin-top: 10px;
 }
 .innerBtnContainer {
+  width: 100px;
+  height: 30px;
+  border-radius: 50%;
   position: absolute;
   left: 50%;
   top: 50%;
+  overflow: hidden;
+  box-shadow: 0px 0px 0px 1px #c9e0f4;
   transform: translate(-50%, -50%);
+}
+.hoverStyle {
+  z-index: 10;
   width: 100px;
+  height: 30px;
+  background-color: rgba(240, 235, 235, 0.9);
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  transition: 0.2s height;
+}
+.innerBtnContainer:hover .hoverStyle {
+  height: 0;
 }
 #allHidden,
 #allShow {
-  margin: 0 8px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  transition: 0.2s all;
 }
 .line {
   width: 100%;
@@ -107,21 +130,71 @@
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
-.el-card__body {
-  padding: 20px;
+#hurtArea > li {
+  height: 61px;
 }
-.muscleInfoContainer {
-  margin: 10px;
-  margin-left: 0;
+#hurtArea > li:first-of-type {
+  padding: 6px 20px;
 }
-.inline {
-  display: inline-block;
+#hurtArea > li:last-of-type {
+  height: 180px;
+}
+#isShowHurtIcon {
+  position: relative;
+}
+.btnCenter {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+}
+.selfHeight {
+  height: 24px;
+  line-height: 24px;
 }
 #hurtPointList {
-  margin-left: 10px;
+  margin-left: 155px;
   font-weight: normal;
 }
-
+span.fontStyle {
+  display: inline-block;
+  width: 140px;
+  font-weight: normal;
+  height: 24px;
+  line-height: 24px;
+  text-align: justify;
+}
+span.fontStyle:after {
+  content: '';
+  display: inline-block;
+  height: 0;
+  width: 100%;
+}
+.relPosStyle {
+  display: inline-block;
+  position: relative;
+  top: -36px;
+}
+#isShowMus {
+  height: 48px;
+  line-height: 48px;
+}
+.leftMargin {
+  margin-left: 10px;
+}
+.leftMarginIcon {
+  margin-left: 39px;
+}
+.selfStyle {
+  position: relative;
+  top: -24px;
+}
+.layui-form-switch {
+  top: -24px;
+  margin-left: 10px;
+}
 * {
   margin: 0;
   padding: 0;

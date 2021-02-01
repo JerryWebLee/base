@@ -81,7 +81,7 @@
     </div>
 
     <script type="x-shader/x-vertex" id="vertexshader">
-         varying vec2 vUv;
+      varying vec2 vUv;
       void main() {
       	vUv = uv;
       	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
